@@ -1,11 +1,10 @@
-<p id="notice"><%= notice %></p>
-
 <h1>Programs</h1>
 <%= link_to 'New Program', new_program_path, class: "btn btn-primary  btn-sm" %>
 
 <table class="table table-striped table-bordered">
   <thead>
     <tr>
+      <th class="counter text-center">#</th>
       <th>Name</th>
       <th>Notes</th>
       <th class="col-sm-1">Action</th>
@@ -13,8 +12,11 @@
   </thead>
 
   <tbody>
+    <% i = 0 %>
     <% @programs.each do |program| %>
+      <% i += 1 %>
       <tr>
+        <td class="text-right"><%=i%></td>
         <td><%= program.name %></td>
         <td><%= program.notes %></td>
         <td><%= link_to 'Edit', edit_program_path(program) %>, <%= link_to 'Destroy', program, method: :delete, data: { confirm: 'Are you sure?' } %></td>

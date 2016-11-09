@@ -12,12 +12,13 @@
  *
  *= require_tree .
  *= require_self
+ *= require bootstrap-datepicker
  */
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
-#main-container {
-  margin-top: 70px;
+th.counter{
+  width:50px;
 }
 .table {
   margin-top: 5px;
