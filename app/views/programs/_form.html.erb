@@ -1,0 +1,28 @@
+
+<%= form_for(program) do |f| %>
+  <% if program.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(program.errors.count, "error") %> prohibited this program from being saved:</h2>
+
+      <ul>
+      <% program.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+      <%= f.label :name%>
+      <%= f.text_field :name,  placeholder: 'Name', class: 'form-control' %>
+  </div>
+  <div class="form-group">
+      <%= f.label :notes%>
+      <%= f.text_area :notes,  placeholder: 'Notes', class: 'form-control' %>
+  </div>
+
+  <div class="actions">
+      <%= f.submit class: "btn btn-primary  btn-lg" %>
+      <%= link_to 'Cancel', programs_path, class: "btn btn-default  btn-lg" %>
+  </div>
+<% end %>

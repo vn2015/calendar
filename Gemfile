@@ -52,3 +52,4 @@ gem "devise"
 gem "pg"
 gem "bootstrap-sass"
 gem 'bootstrap-sass-extras'
+gem 'devise-bootstrapped'
