@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :meetingtypes
   resources :clients
   resources :programs
   devise_for :users

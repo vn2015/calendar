@@ -1,0 +1,23 @@
+<h1>Meeting types</h1>
+<%= link_to 'New Meeting type', new_meetingtype_path, class: "btn btn-primary  btn-sm" %>
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th class="counter text-center">#</th>
+      <th>Name</th>
+      <th class="col-sm-1">Action</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% i = 0 %>
+    <% @meetingtypes.each do |meetingtype| %>
+    <% i += 1 %>
+      <tr>
+        <td class="text-right"><%=i%></td>
+        <td><%= meetingtype.name %></td>
+        <td><%= link_to 'Edit', edit_meetingtype_path(meetingtype) %>, <%= link_to 'Destroy', meetingtype, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -60,7 +60,7 @@
           <ul class="nav navbar-nav">
             <li><%= link_to "Programs", programs_path %></li>
             <li><%= link_to "Clients", clients_path %></li>
-            <li><%= link_to "Link3", '#' %></li>
+            <li><%= link_to "Meeting types", meetingtypes_path %></li>
           </ul>
         <%end%>
           <div class="nav navbar-nav" style="float: right">
@@ -70,7 +70,6 @@
                         <li><%= link_to "Log out", destroy_user_session_path, method: :delete  %></li>
                     <%else%>
                         <li><%= link_to "Sign in", new_user_session_path  %></li>
-                        <li><%= link_to "Sign up", new_user_registration_path  %></li>
                     <%end %>
                 </ul>
           </div>

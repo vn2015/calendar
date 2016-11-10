@@ -1,0 +1,1 @@
+json.array! @meetingtypes, partial: 'meetingtypes/meetingtype', as: :meetingtype
