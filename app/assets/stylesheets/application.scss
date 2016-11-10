@@ -17,6 +17,17 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
+@media screen and (max-width: 840px) {
+  #sign_in {
+    float: left;
+  }
+}
+@media screen and (min-width: 841px) {
+  #sign_in {
+    float: right;
+  }
+}
+
 th.counter{
   width:50px;
 }

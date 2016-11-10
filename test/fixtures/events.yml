@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  start: 2016-11-10 15:25:12
+  end: 2016-11-10 15:25:12
+  transport: MyString
+  address: MyString
+  client: one
+  program: one
+
+two:
+  title: MyString
+  start: 2016-11-10 15:25:12
+  end: 2016-11-10 15:25:12
+  transport: MyString
+  address: MyString
+  client: two
+  program: two

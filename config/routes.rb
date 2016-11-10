@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :events
   resources :meetingtypes
   resources :clients
   resources :programs

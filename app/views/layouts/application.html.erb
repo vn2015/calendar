@@ -63,7 +63,7 @@
             <li><%= link_to "Meeting types", meetingtypes_path %></li>
           </ul>
         <%end%>
-          <div class="nav navbar-nav" style="float: right">
+          <div class="nav "  id="sign_in">
                 <ul class="nav navbar-nav">
                     <%if user_signed_in?%>
                         <li><a><%=current_user.email%></a></li>
