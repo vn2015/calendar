@@ -54,4 +54,4 @@ gem "bootstrap-sass"
 gem 'bootstrap-sass-extras'
 gem 'devise-bootstrapped'
 gem 'bootstrap-datepicker-rails'
-#gem 'bootstrap_form'
+
