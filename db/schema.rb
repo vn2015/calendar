@@ -16,14 +16,14 @@ ActiveRecord::Schema.define(version: 20161111154302) do
   enable_extension "plpgsql"
 
   create_table "clients", force: :cascade do |t|
-    t.date     "dob",                        null: false
+    t.date     "dob",                                                 null: false
     t.text     "notes"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.datetime "created_at",                                          null: false
+    t.datetime "updated_at",                                          null: false
     t.string   "first_name"
     t.string   "last_name"
     t.string   "client_id"
-    t.decimal  "hours",      default: "0.0"
+    t.decimal  "hours",      precision: 10, scale: 2, default: "0.0"
   end
 
   create_table "events", force: :cascade do |t|
