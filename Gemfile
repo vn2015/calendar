@@ -48,10 +48,11 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 
-gem "devise"
-gem "pg"
-gem "bootstrap-sass"
+gem 'devise'
+gem 'pg'
+gem 'bootstrap-sass'
 gem 'bootstrap-sass-extras'
 gem 'devise-bootstrapped'
 gem 'bootstrap-datepicker-rails'
+#gem 'jquery-validation-rails'
 

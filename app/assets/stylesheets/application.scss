@@ -17,6 +17,9 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
+#main-container {
+  min-height:700px;
+}
 @media screen and (max-width: 840px) {
   #sign_in {
     float: left;
@@ -37,8 +40,14 @@ th.counter{
 a.btn-sm {
   color: #ffffff;
 }
-
-footer {
-  position: absolute;
-  bottom: 0px;
+#calendar a:hover {
+  background-color:#3a87ad;
+}
+.modal-header {
+  background-color: #4caf50;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.modal-title {
+  color: #ffffff;
 }

@@ -14,21 +14,25 @@
 
   <div class="form-group">
     <%= f.label :first_name %>
-    <%= f.text_field :first_name, placeholder: 'First name', class: 'form-control' %>
+    <%= f.text_field :first_name, placeholder: 'First name', class: 'form-control', :required => true %>
   </div>
 
   <div class="form-group">
      <%= f.label :last_name %>
-     <%= f.text_field :last_name, placeholder: 'Last name', class: 'form-control' %>
- </div>
+     <%= f.text_field :last_name, placeholder: 'Last name', class: 'form-control', :required => true %>
+  </div>
   <div class="form-group">
-       <%= f.label :dob %>
-       <%= f.text_field :dob, placeholder: 'Date of birth', class: 'form-control', "data-provide" => 'datepicker' %>
+      <%= f.label :dob %>
+      <%= f.text_field :dob, placeholder: 'Date of birth', class: 'form-control', "data-provide" => 'datepicker',  :required => true %>
+   </div>
+   <div class="form-group">
+      <label>Client ID</label>
+      <%= f.text_field :client_id, placeholder: 'Client ID', class: 'form-control', :required => true %>
    </div>
 
    <div class="form-group">
-    <%= f.label :notes %>
-    <%= f.text_area :notes, placeholder: 'Notes', class: 'form-control' %>
+      <%= f.label :notes %>
+     <%= f.text_area :notes, placeholder: 'Notes', class: 'form-control' %>
    </div>
 
    <div class="actions">

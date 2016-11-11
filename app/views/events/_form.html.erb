@@ -11,42 +11,39 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :title %>
-    <%= f.text_field :title %>
+  <div class="form-group">
+    <%= f.text_field :title, class: 'form-control', placeholder: 'Name', :required => true %>
+  </div>
+  <div class="form-group">
+    <%= select_tag :client_id, options_from_collection_for_select(@clients, "id", "combined_value"),  class: 'form-control', prompt: "Select the client" , :required => true %>
   </div>
 
-  <div class="field">
+  <div class="form-group">
+    <%= select_tag :program_id, options_from_collection_for_select(@programs, "id", "name"),  prompt: "Select the program", class: 'form-control', :required => true %>
+  </div>
+
+
+  <div class="form-group">
     <%= f.label :start %>
-    <%= f.datetime_select :start %>
+    <%= f.text_field :start, class: 'form-control', "data-provide" => 'datepicker', :required => true %>
   </div>
 
-  <div class="field">
+  <div class="form-group">
     <%= f.label :end %>
-    <%= f.datetime_select :end %>
+    <%= f.text_field :end, class: 'form-control',"data-provide" => 'datepicker', :required => true %>
   </div>
 
-  <div class="field">
-    <%= f.label :transport %>
-    <%= f.text_field :transport %>
+  <div class="form-group">
+    <%= f.text_field :transport, class: 'form-control', placeholder: 'Transport'%>
   </div>
 
-  <div class="field">
-    <%= f.label :address %>
-    <%= f.text_field :address %>
-  </div>
-
-  <div class="field">
-    <%= f.label :client_id %>
-    <%= f.text_field :client_id %>
-  </div>
-
-  <div class="field">
-    <%= f.label :program_id %>
-    <%= f.text_field :program_id %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit %>
+  <div class="form-group">
+    <%= f.text_field :address, class: 'form-control' , placeholder: 'Address'%>
   </div>
 <% end %>
+<script language="JavaScript">
+   $(document).ready(function () {
+          $('#event_start').datepicker({format: 'yyyy-mm-dd HH:mm'});
+          $('#event_end').datepicker({format: 'yyyy-mm-dd hh:mm'});
+    });
+</script>

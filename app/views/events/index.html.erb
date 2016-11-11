@@ -1,39 +1,150 @@
-<p id="notice"><%= notice %></p>
-
 <h1>Events</h1>
+<div class="row">
+<!--
+    <div class="col-md-2">
+            <h3>Programs</h3>
+            <ul class="nav nav-list">
+                <% @programs.each do |event| %>
+                   <li><%= link_to event.name, event %></li>
+                <% end %>
+            </ul>
+    </div><!--/.well -->
 
-<table>
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Start</th>
-      <th>End</th>
-      <th>Transport</th>
-      <th>Address</th>
-      <th>Client</th>
-      <th>Program</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
 
-  <tbody>
-    <% @events.each do |event| %>
-      <tr>
-        <td><%= event.title %></td>
-        <td><%= event.start %></td>
-        <td><%= event.end %></td>
-        <td><%= event.transport %></td>
-        <td><%= event.address %></td>
-        <td><%= event.client %></td>
-        <td><%= event.program %></td>
-        <td><%= link_to 'Show', event %></td>
-        <td><%= link_to 'Edit', edit_event_path(event) %></td>
-        <td><%= link_to 'Destroy', event, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+    <div class="col-md-12">
+        <div id="calendar"></div>
+    </div>
+</div><!--/row-->
 
-<br>
 
-<%= link_to 'New Event', new_event_path %>
+<!-- Modal -->
+<div class="modal fade" id="dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"  data-backdrop="static" data-keyboard="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">New Event</h3>
+            </div>
+            <div class="modal-body">
+                <%= render 'form', event: @event%>
+                <%= submit_tag "Create Event", class: "btn btn-primary  btn-lg", id:"btn_create" %>
+                <%= submit_tag "Cancel", class: "btn btn-default  btn-lg", id:"btn_close" %>
+
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<link href='/assets/stylesheets/fullcalendar.min.css' rel='stylesheet' />
+<link href='/assets/stylesheets/fullcalendar.print.css' rel='stylesheet' media='print' />
+<link href='/assets/stylesheets/scheduler.min.css' rel='stylesheet' />
+
+<script src='/assets/javascripts/moment.min.js'></script>
+<script src='/assets/javascripts/fullcalendar.min.js'></script>
+<script src='/assets/javascripts/scheduler.min.js'></script>
+<script language="JavaScript">
+
+    $(document).ready(function() {
+
+        function close_modal()
+        {
+            $('#dialog').modal("hide");
+            $('#calendar').fullCalendar('unselect');
+            $("#new_event")[0].reset();
+        }
+
+
+        $('#btn_close').click(function(){
+            close_modal();
+        });
+
+        $('#btn_create').click(function(){
+            if ($("#event_title").val()==""){
+                alert ('Field Name is empty!');
+                return;
+            }
+            if ($("#client_id").val()==""){
+                alert ('Field Client is empty!');
+                return;
+            }
+            if ($("#program_id").val()==""){
+                alert ('Field Program is empty!');
+                return;
+            }
+            if ($("#event_start").val()==""){
+                alert ('Field Start date is empty!');
+                return;
+            }
+            if ($("#event_end").val()==""){
+                alert ('Field End date is empty!');
+                return;
+            }
+            jQuery.ajax({
+                type: 'POST',
+                url: '/events#create',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    event:
+                        {
+                            title: $("#event_title").val(),
+                            start: $("#event_start").val(),
+                            end: $("#event_end").val(),
+                            client_id: $("#client_id").val(),
+                            program_id: $("#program_id").val(),
+                            address: $("#event_address").val(),
+                            transport: $("#event_transport").val()
+                        }
+                }),
+
+                success: function (json) {
+                    eventData = {
+                        title: $("#event_title").val(),
+                        start: $("#event_start").val(),
+                        end: $("#event_end").val()
+                    };
+                    $('#calendar').fullCalendar('renderEvent', eventData, true);
+                    close_modal();
+                },
+                error: function (answer){
+                    console.log(answer);
+                }
+            });
+        });
+
+
+
+
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'agendaDay,agendaWeek,month,timelineThreeMonts,timelineYear'
+            },
+            views: {
+                timelineThreeMonts: {
+                    type: 'timeline',
+                    duration: { months: 3 }
+                }
+            },
+            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+            defaultView: 'agendaWeek',
+            defaultDate: '<%=DateTime.now.to_date%>',
+            navLinks: true, // can click day/week names to navigate views
+            selectable: true,
+            selectHelper: true,
+            select: function(start, end) {
+                $("#event_start").val(moment(start).format('YYYY-MM-DD hh:mm'));
+                $("#event_end").val(moment(end).format('YYYY-MM-DD hh:mm'));
+                $('#dialog').modal("show");
+            },
+            editable: true,
+            eventLimit: true, // allow "more" link when too many events
+            events: {url: '/events/'}
+        });
+
+    });
+
+
+</script>
