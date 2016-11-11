@@ -4,7 +4,7 @@ class MeetingtypesController < ApplicationController
   # GET /meetingtypes
   # GET /meetingtypes.json
   def index
-    @meetingtypes = Meetingtype.all
+    @meetingtypes = Meetingtype.all.paginate(:page => params[:page])
   end
 
   # GET /meetingtypes/1
