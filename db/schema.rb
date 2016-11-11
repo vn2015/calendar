@@ -10,19 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161111080817) do
+ActiveRecord::Schema.define(version: 20161111154302) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "clients", force: :cascade do |t|
-    t.date     "dob",        null: false
+    t.date     "dob",                        null: false
     t.text     "notes"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
     t.string   "first_name"
     t.string   "last_name"
     t.string   "client_id"
+    t.decimal  "hours",      default: "0.0"
   end
 
   create_table "events", force: :cascade do |t|

@@ -8,6 +8,7 @@
       <th>Last Name</th>
       <th>Dob</th>
       <th>Client ID</th>
+      <th>Hours</th>
       <th>Notes</th>
       <th class="col-sm-1">Action</th>
     </tr>
@@ -23,6 +24,7 @@
         <td><%= client.last_name %></td>
         <td><%= client.dob %></td>
         <td><%= client.client_id %></td>
+        <td class="text-right"><%= client.hours %></td>
         <td><%= client.notes %></td>
         <td><%= link_to 'Edit', edit_client_path(client) %>, <%= link_to 'Destroy', client, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
