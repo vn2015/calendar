@@ -23,11 +23,12 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h3 class="modal-title">New Event</h3>
+                <h3 class="modal-title" id="modal_header"></h3>
             </div>
             <div class="modal-body">
                 <%= render 'form', event: @event%>
                 <%= submit_tag "Create Event", class: "btn btn-primary  btn-lg", id:"btn_create" %>
+                <%= submit_tag "Update Event", class: "btn btn-primary  btn-lg", id:"btn_update" %>
                 <%= submit_tag "Cancel", class: "btn btn-default  btn-lg", id:"btn_close" %>
 
             </div>
@@ -36,9 +37,88 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+
+<!-- Modal -->
+<div class="modal fade" id="select_action" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"  data-backdrop="static" data-keyboard="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title" >Choose the action</h3>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                Select the action:
+                    <%= button_tag "Update", class: "btn btn-primary  btn-sm", id:"event_update_action" %>
+                    <%= button_tag "Delete", class: "btn btn-primary  btn-sm", id:"event_delete_action" %>
+                </div>
+                <div class="form-group text-right">
+                    <%= submit_tag "Cancel", class: "btn btn-default  btn-lg ", id:"btn_close_action" %>
+                </div>
+            </div>
+       </div><!-- /.modal-content -->
+   </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
 <script language="JavaScript">
 
+    var format_str='YYYY-MM-DD hh:mm a';
+    var curr_event_id =0;
+    var curr_event_obj;
+
+
+
     $(document).ready(function() {
+
+        function SetForm(event)
+        {
+            $("#event_start").val(moment(event.start).format(format_str));
+            $("#event_end").val(moment(event.end).format(format_str));
+            $("#event_title").val(event.title);
+            $("#meetingtype_id").val(event.meetingtype_id);
+            $("#client_id").val(event.client_id);
+            $("#program_id").val(event.program_id);
+            $("#event_address").val(event.address);
+            $("#event_transport").val(event.transport);
+            $("#event_notes").val(event.notes);
+            $("#modal_header").text("Edit event");
+            $("#btn_update").show();
+            $("#btn_create").hide();
+        }
+
+        function CheckForm()
+        {
+            if ($("#event_title").val()==""){
+                alert ('Field Name is empty!');
+                return false;
+            }
+            if ($("#meetingtype_id").val()==""){
+                alert ('Field Meeting type is empty!');
+                return false;
+            }
+            if ($("#client_id").val()==""){
+                alert ('Field Client is empty!');
+                return false;
+            }
+            if ($("#program_id").val()==""){
+                alert ('Field Program is empty!');
+                return false;
+            }
+            if ($("#event_start").val()==""){
+                alert ('Field Start date is empty!');
+                return false;
+            }
+            if ($("#event_end").val()==""){
+                alert ('Field End date is empty!');
+                return false;
+            }
+
+            return true;
+
+        }
+
+
 
         function close_modal()
         {
@@ -52,27 +132,93 @@
             close_modal();
         });
 
+        $('#btn_close_action').click(function(){
+            $("#select_action").modal("hide");
+        });
+
+
+
+        $("#event_update_action").click(function(){
+            $("#modal_header").text("Edit event");
+            $("#btn_update").show();
+            $("#btn_create").hide();
+            SetForm(curr_event_obj);
+
+            $('#select_action').modal("hide");
+            $('#dialog').modal("show");
+        });
+
+        $("#event_update_action").click(function(){
+            $("#modal_header").text("Edit event");
+            $("#btn_update").show();
+            $("#btn_create").hide();
+            SetForm(curr_event_obj);
+
+            $('#select_action').modal("hide");
+            $('#dialog').modal("show");
+        });
+
+        $("#event_delete_action").click(function() {
+
+            var strconfirm = confirm("Are you sure?");
+            if (strconfirm == true) {
+                jQuery.ajax({
+                    type: 'DELETE',
+                    url: '/events/'+curr_event_id,
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    longPressDelay:200,
+                    success: function (json) {
+                        $('#select_action').modal("hide");
+                        $('#calendar').fullCalendar('refetchEvents' );
+
+                    },
+                    error: function (answer){
+                        alert(answer.responseJSON.errors);
+                        revertFunc();
+                    }
+                });
+
+
+            }
+        });
+        $('#btn_update').click(function(){
+            if (!CheckForm()) return;
+            jQuery.ajax({
+                type: 'PATCH',
+                url: '/events/'+curr_event_id+'#update',
+                dataType: 'json',
+                contentType: 'application/json',
+                longPressDelay:200,
+                data: JSON.stringify({
+                    event:
+                    {
+                        title: $("#event_title").val(),
+                        start: $("#event_start").val(),
+                        end: $("#event_end").val(),
+                        meetingtype_id:$("#meetingtype_id").val(),
+                        client_id: $("#client_id").val(),
+                        program_id: $("#program_id").val(),
+                        address: $("#event_address").val(),
+                        transport: $("#event_transport").val(),
+                        notes: $("#event_notes").val()
+                    }
+                }),
+
+                success: function (json) {
+                    $('#calendar').fullCalendar( 'refetchEvents' );
+                    close_modal();
+                },
+                error: function (answer){
+                    alert(answer.responseJSON.errors);
+                }
+            });
+        });
+
+
         $('#btn_create').click(function(){
-            if ($("#event_title").val()==""){
-                alert ('Field Name is empty!');
-                return;
-            }
-            if ($("#client_id").val()==""){
-                alert ('Field Client is empty!');
-                return;
-            }
-            if ($("#program_id").val()==""){
-                alert ('Field Program is empty!');
-                return;
-            }
-            if ($("#event_start").val()==""){
-                alert ('Field Start date is empty!');
-                return;
-            }
-            if ($("#event_end").val()==""){
-                alert ('Field End date is empty!');
-                return;
-            }
+
+           if (!CheckForm()) return;
             jQuery.ajax({
                 type: 'POST',
                 url: '/events#create',
@@ -85,10 +231,12 @@
                             title: $("#event_title").val(),
                             start: $("#event_start").val(),
                             end: $("#event_end").val(),
+                            meetingtype_id:$("#meetingtype_id").val(),
                             client_id: $("#client_id").val(),
                             program_id: $("#program_id").val(),
                             address: $("#event_address").val(),
-                            transport: $("#event_transport").val()
+                            transport: $("#event_transport").val(),
+                            notes: $("#event_notes").val()
                         }
                 }),
 
@@ -99,10 +247,11 @@
                         end: $("#event_end").val()
                     };
                     $('#calendar').fullCalendar('renderEvent', eventData, true);
+                    $('#calendar').fullCalendar( 'refetchEvents' );
                     close_modal();
                 },
                 error: function (answer){
-                    console.log(answer);
+                    alert(answer.responseJSON.errors);
                 }
             });
         });
@@ -129,9 +278,78 @@
             selectable: true,
             selectHelper: true,
             select: function(start, end) {
-                $("#event_start").val(moment(start).format('YYYY-MM-DD hh:mm'));
-                $("#event_end").val(moment(end).format('YYYY-MM-DD hh:mm'));
+                $("#new_event")[0].reset();
+                $("#event_start").val(moment(start).format(format_str));
+                $("#event_end").val(moment(end).format(format_str));
+                $("#modal_header").text("New event");
+                $("#btn_update").hide();
+                $("#btn_create").show();
                 $('#dialog').modal("show");
+            },
+            eventClick: function(event, jsEvent, view) {
+                curr_event_id = event.id;
+                curr_event_obj =event;
+                $('#select_action').modal("show");
+                //$('#dialog').modal("show");
+                //$(this).css('border-color', 'red');
+
+            },
+            eventResize: function(event, delta, revertFunc) {
+                curr_event_id = event.id;
+                jQuery.ajax({
+                    type: 'PATCH',
+                    url: '/events/'+curr_event_id+'#update',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    longPressDelay:200,
+                    data: JSON.stringify({
+                        event:
+                        {
+                            start: moment(event.start).format(format_str),
+                            end: moment(event.end).format(format_str),
+                            client_id: event.client_id
+                        }
+                    }),
+
+                    success: function (json) {
+                        $('#calendar').fullCalendar( 'refetchEvents' );
+
+                    },
+                    error: function (answer){
+                        alert(answer.responseJSON.errors);
+                        revertFunc();
+                    }
+                });
+
+
+            },
+            eventDrop: function(event, delta, revertFunc) {
+                curr_event_id = event.id;
+                jQuery.ajax({
+                    type: 'PATCH',
+                    url: '/events/'+curr_event_id+'#update',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    longPressDelay:200,
+                    data: JSON.stringify({
+                        event:
+                        {
+                            start: moment(event.start).format(format_str),
+                            end: moment(event.end).format(format_str),
+                            client_id: event.client_id
+                        }
+                    }),
+
+                    success: function (json) {
+                        $('#calendar').fullCalendar( 'refetchEvents' );
+
+                    },
+                    error: function (answer){
+                        //console.log(answer);
+                        alert(answer.responseJSON.errors);
+                        revertFunc();
+                    }
+                });
             },
             editable: true,
             eventLimit: true, // allow "more" link when too many events
