@@ -37,6 +37,7 @@ class EventsController < ApplicationController
     end
     respond_to do |format|
       if @event.save
+        count_hours
         format.html { redirect_to @event, notice: 'Event was successfully created.' }
         format.json { render :show, status: :created, location: @event }
       else
@@ -55,6 +56,7 @@ class EventsController < ApplicationController
 
     respond_to do |format|
       if @event.update(event_params)
+        count_hours
         format.html { redirect_to @event, notice: 'Event was successfully updated.' }
         format.json { render :show, status: :ok, location: @event }
         #format.json {render :json => { :errors => check_interval}, status: :no}
@@ -69,6 +71,7 @@ class EventsController < ApplicationController
   # DELETE /events/1.json
   def destroy
     @event.destroy
+    count_hours
     respond_to do |format|
       format.html { redirect_to events_url, notice: 'Event was successfully destroyed.' }
       format.json { head :no_content }
@@ -107,6 +110,14 @@ class EventsController < ApplicationController
         count_cross_events = count_cross_events.count
       end
       return count_cross_events
+
+    end
+
+    def count_hours
+      total_hours = Event.where('client_id=?',params[:event][:client_id]).sum('round((extract(epoch from "end" - start)/3600)::numeric,2)')
+      client = Client.find(params[:event][:client_id])
+      client.hours=total_hours
+      client.save
 
     end
 
