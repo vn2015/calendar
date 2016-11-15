@@ -12,10 +12,12 @@
  *
  *= require_tree .
  *= require_self
- *= require bootstrap-datepicker
+
+
  */
 @import "bootstrap-sprockets";
 @import "bootstrap";
+@import 'bootstrap-datetimepicker';
 
 #main-container {
   min-height:700px;

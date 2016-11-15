@@ -66,6 +66,16 @@
     var format_str='YYYY-MM-DD hh:mm a';
     var curr_event_id =0;
     var curr_event_obj;
+    $('#event_start').datetimepicker({
+        format: format_str,
+        extraFormats: [ format_str ],
+        sideBySide: true
+    });
+    $('#event_end').datetimepicker({
+        format: format_str,
+        extraFormats: [ format_str ],
+        sideBySide: true
+    });
 
 
 

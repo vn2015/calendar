@@ -42,13 +42,13 @@ GEM
     autoprefixer-rails (6.5.2)
       execjs
     bcrypt (3.1.11)
-    bootstrap-datepicker-rails (1.6.4.1)
-      railties (>= 3.0)
     bootstrap-sass (3.3.7)
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
     bootstrap-sass-extras (0.0.7)
       rails (>= 3.1.0)
+    bootstrap3-datetimepicker-rails (4.17.42)
+      momentjs-rails (>= 2.8.1)
     builder (3.2.2)
     byebug (9.0.6)
     coffee-rails (4.2.1)
@@ -93,6 +93,8 @@ GEM
     mime-types-data (3.2016.0521)
     mini_portile2 (2.1.0)
     minitest (5.9.1)
+    momentjs-rails (2.15.1)
+      railties (>= 3.1)
     multi_json (1.12.1)
     nio4r (1.2.1)
     nokogiri (1.6.8.1)
@@ -179,9 +181,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bootstrap-datepicker-rails
   bootstrap-sass
   bootstrap-sass-extras
+  bootstrap3-datetimepicker-rails (~> 4.17.42)
   byebug
   coffee-rails (~> 4.2)
   devise
@@ -189,6 +191,7 @@ DEPENDENCIES
   jbuilder (~> 2.5)
   jquery-rails
   listen (~> 3.0.5)
+  momentjs-rails (>= 2.9.0)
   pg
   puma (~> 3.0)
   rails (~> 5.0.0, >= 5.0.0.1)

@@ -23,7 +23,7 @@
   </div>
   <div class="form-group">
       <%= f.label :dob %>
-      <%= f.text_field :dob, placeholder: 'Date of birth', class: 'form-control', "data-provide" => 'datepicker',  :required => true %>
+      <%= f.text_field :dob, placeholder: 'Date of birth', class: 'form-control',  :required => true %>
    </div>
    <div class="form-group">
       <label>Client ID</label>
@@ -43,6 +43,9 @@
 
           <script language="JavaScript">
             $(document).ready(function () {
-              $('#client_dob').datepicker({format: 'yyyy-mm-dd'});
+              $('#client_dob').datetimepicker({
+                  format: 'YYYY-MM-DD',
+                  extraFormats: [ 'YYYY-MM-DD' ]
+              });
             });
           </script>
