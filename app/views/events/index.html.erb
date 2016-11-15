@@ -44,13 +44,14 @@
       <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h3 class="modal-title" >Choose the action</h3>
+                <h3 class="modal-title" >Select the action</h3>
             </div>
             <div class="modal-body">
                 <div class="form-group">
                 Select the action:
                     <%= button_tag "Update", class: "btn btn-primary  btn-sm", id:"event_update_action" %>
                     <%= button_tag "Delete", class: "btn btn-primary  btn-sm", id:"event_delete_action" %>
+                    <%= button_tag "Repeat", class: "btn btn-primary  btn-sm", id:"event_repeat_action" %>
                 </div>
                 <div class="form-group text-right">
                     <%= submit_tag "Cancel", class: "btn btn-default  btn-lg ", id:"btn_close_action" %>
@@ -60,26 +61,48 @@
    </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<!-- Modal -->
+<div class="modal fade" id="repeat_action" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"  data-backdrop="static" data-keyboard="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title" >Repeat the action</h3>
+            </div>
+            <div class="modal-body">
+                <form id="repeat_action_form">
+                    <%= render 'repeat_form'%>
+                </form>
+                <div class="form-group">
+                    <%= submit_tag "Repeat Event", class: "btn btn-primary  btn-lg", id:"btn_repeat" %>
+                    <%= submit_tag "Cancel", class: "btn btn-default  btn-lg ", id:"btn_close_action_repeat" %>
+                </div>
+            </div>
+       </div><!-- /.modal-content -->
+   </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <script language="JavaScript">
 
     var format_str='YYYY-MM-DD hh:mm a';
     var curr_event_id =0;
     var curr_event_obj;
-    $('#event_start').datetimepicker({
-        format: format_str,
-        extraFormats: [ format_str ],
-        sideBySide: true
-    });
-    $('#event_end').datetimepicker({
-        format: format_str,
-        extraFormats: [ format_str ],
-        sideBySide: true
-    });
 
 
 
     $(document).ready(function() {
+
+        $('#event_start').datetimepicker({
+            format: format_str,
+            extraFormats: [ format_str ],
+            sideBySide: true
+        });
+
+        $('#event_end').datetimepicker({
+            format: format_str,
+            extraFormats: [ format_str ],
+            sideBySide: true
+        });
 
         function SetForm(event)
         {
@@ -146,6 +169,59 @@
             $("#select_action").modal("hide");
         });
 
+        $('#btn_close_action_repeat').click(function(){
+            $("#repeat_action").modal("hide");
+        });
+
+        $("#event_repeat_action").click(function() {
+            $("#repeat_action_form")[0].reset();
+            $('#select_action').modal("hide");
+            $('#repeat_action').modal("show");
+        });
+        $("#btn_repeat").click(function() {
+
+            event =curr_event_obj;
+            var strconfirm = confirm("Are you sure?");
+            if (strconfirm == true) {
+                jQuery.ajax({
+                    type: 'POST',
+                    url: '/eventsrepeat',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    longPressDelay:200,
+                    data: JSON.stringify({
+                        event:
+                        {
+                            title: event.title,
+                            start: moment(event.start).format(format_str),
+                            end: moment(event.end).format(format_str),
+                            meetingtype_id: event.meetingtype_id,
+                            client_id: event.client_id,
+                            program_id: event.program_id,
+                            address: event.address,
+                            transport: event.transport,
+                            notes: event.notes,
+                            repeat_period: $("#repeat_period").val(),
+                            repeat_quantity: $("#repeat_quantity").val(),
+                            id: event.id
+
+                        }
+                    }),
+                    success: function (json) {
+                        alert("Event succefully repeated!");
+                        $('#repeat_action').modal("hide");
+                        $('#calendar').fullCalendar('refetchEvents' );
+
+                    },
+                    error: function (answer){
+                        alert(answer.responseJSON.errors);
+                        //revertFunc();
+                    }
+                });
+
+
+            }
+        });
 
 
         $("#event_update_action").click(function(){
@@ -172,12 +248,20 @@
 
             var strconfirm = confirm("Are you sure?");
             if (strconfirm == true) {
+                event =curr_event_obj;
                 jQuery.ajax({
                     type: 'DELETE',
                     url: '/events/'+curr_event_id,
                     dataType: 'json',
                     contentType: 'application/json',
                     longPressDelay:200,
+                    data: JSON.stringify({
+                        event: {
+                            start: moment(event.start).format(format_str),
+                            end: moment(event.end).format(format_str),
+                            client_id: event.client_id
+                        }
+                    }),
                     success: function (json) {
                         $('#select_action').modal("hide");
                         $('#calendar').fullCalendar('refetchEvents' );
@@ -185,7 +269,7 @@
                     },
                     error: function (answer){
                         alert(answer.responseJSON.errors);
-                        revertFunc();
+                        //revertFunc();
                     }
                 });
 

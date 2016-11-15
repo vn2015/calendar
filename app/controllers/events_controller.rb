@@ -47,6 +47,58 @@ class EventsController < ApplicationController
     end
   end
 
+
+  def repeat
+    @event = Event.find(params[:event][:id])
+    repeat_period = params[:event][:repeat_period]
+    repeat_quantity = params[:event][:repeat_quantity].to_i
+
+    start_date=params[:event][:start].to_datetime
+    end_date=params[:event][:end].to_datetime
+
+    
+    for i in 1..repeat_quantity
+      case repeat_period # a_variable is the variable we want to compare
+        when "Daily"
+          start_date = start_date +1.days
+          end_date = end_date +1.days
+        when "Weekly"
+          start_date = start_date +1.weeks
+          end_date = end_date +1.weeks
+        when "Monthly"
+          start_date = start_date +1.months
+          end_date = end_date +1.months
+        when "Quarterly"
+          start_date = start_date +3.months
+          end_date = end_date +3.months
+        when "Yearly"
+          start_date = start_date +1.years
+          end_date = end_date +1.years
+      end
+
+      if check_interval(start_date,end_date,params[:event][:client_id]) === 0
+        event_params1= {
+          title: params[:event][:title],
+          start: start_date,
+          end: end_date,
+          meetingtype_id: params[:event][:meetingtype_id],
+          client_id: params[:event][:client_id],
+          program_id: params[:event][:program_id],
+          address: params[:event][:address],
+          transport: params[:event][:transport],
+          notes: params[:event][:notes]
+        }
+        @event = Event.new(event_params1)
+        @event.save
+      end
+
+    end
+
+    respond_to do |format|
+      format.json { render :show, status: :created, location: @event }
+    end
+  end
+
   # PATCH/PUT /events/1
   # PATCH/PUT /events/1.json
   def update
@@ -89,27 +141,37 @@ class EventsController < ApplicationController
       params.require(:event).permit(:title, :start, :end, :transport, :address, :client_id, :program_id, :meetingtype_id, :notes)
     end
 
-    def check_interval
-      date_end = params[:event][:end].to_datetime
-      date_start = params[:event][:start].to_datetime
-      client_id = params[:event][:client_id]
-      event_id =params[:id]
+    def check_interval(date_start_orig='', date_end_orig='',client_id_orig='')
+      if date_start_orig===''
+        date_end = params[:event][:end].to_datetime
+        date_start = params[:event][:start].to_datetime
+        client_id = params[:event][:client_id]
+        event_id =params[:id]
+      else
+        date_end = date_end_orig
+        date_start = date_start_orig
+        client_id = client_id_orig
+      end
 
       date_end = date_end + 59.minutes
       date_end= date_end.strftime('%Y-%m-%d %I:%M %p')
       date_start= date_start.strftime('%Y-%m-%d %I:%M %p')
       count_cross_events = Event.where('start<=? and "end" >? and client_id = ? ',date_end,date_start,client_id)
-      count_cross_events = count_cross_events.where("id <> ?",params[:id]) if params[:id].present?
+      count_cross_events = count_cross_events.where('id <> ?',params[:id]) if params[:id].present?
       count_cross_events = count_cross_events.count
-      if count_cross_events ==0
-        date_start = params[:event][:start].to_datetime
+      if count_cross_events ===0
+        if date_start_orig===''
+          date_start = params[:event][:start].to_datetime
+        else
+          date_start = date_start_orig
+        end
         date_start = date_start - 59.minutes
         date_start= date_start.strftime('%Y-%m-%d %I:%M %p')
         count_cross_events = Event.where(' start<=? and "end" >=? and client_id =? ',date_start,date_start,client_id)
-        count_cross_events = count_cross_events.where("id <> ?",params[:id]) if params[:id].present?
+        count_cross_events = count_cross_events.where('id <> ?',params[:id]) if params[:id].present?
         count_cross_events = count_cross_events.count
       end
-      return count_cross_events
+      return count_cross_events.to_i
 
     end
 
