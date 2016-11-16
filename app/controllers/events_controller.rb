@@ -1,5 +1,6 @@
 class EventsController < ApplicationController
   before_action :set_event, only: [:show, :edit, :update, :destroy]
+  before_filter :authenticate_user!
 
   # GET /events
   # GET /events.json
@@ -57,8 +58,10 @@ class EventsController < ApplicationController
 
     start_date=params[:event][:start].to_datetime
     end_date=params[:event][:end].to_datetime
+    date_finish = params[:event][:start].to_datetime+10.years
+    date_finish = params[:event][:repeat_end].to_datetime if params[:event][:repeat_end].present?
 
-    
+
     for i in 1..repeat_quantity
       case repeat_period # a_variable is the variable we want to compare
         when "Daily"
@@ -76,6 +79,10 @@ class EventsController < ApplicationController
         when "Yearly"
           start_date = start_date +1.years
           end_date = end_date +1.years
+      end
+
+      if start_date>date_finish
+          break
       end
 
       if check_interval(start_date,end_date,params[:event][:client_id]) === 0

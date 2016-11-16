@@ -1,5 +1,6 @@
 class MeetingtypesController < ApplicationController
   before_action :set_meetingtype, only: [:show, :edit, :update, :destroy]
+  before_filter :authenticate_user!
 
   # GET /meetingtypes
   # GET /meetingtypes.json

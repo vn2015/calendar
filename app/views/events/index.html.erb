@@ -1,14 +1,8 @@
-<h1>Events</h1>
 <div class="row">
-<!--
-    <div class="col-md-2">
-            <h3>Programs</h3>
-            <ul class="nav nav-list">
-                <% @programs.each do |event| %>
-                   <li><%= link_to event.name, event %></li>
-                <% end %>
-            </ul>
-    </div><!--/.well -->
+    <div class="col-md-2 col-sm-6 col-xs-6"><h1>Events</h1></div>
+    <div class="col-md-10 col-sm-6 col-xs-6" ><%= submit_tag "Create Event", class: "btn btn-primary  btn-іь", id:"btn_top_create",style: "margin-top:25px;" %></div>
+</div>
+<div class="row">
 
 
     <div class="col-md-12">
@@ -49,7 +43,7 @@
             <div class="modal-body">
                 <div class="form-group">
                 Select the action:
-                    <%= button_tag "Update", class: "btn btn-primary  btn-sm", id:"event_update_action" %>
+                    <%= button_tag "Edit", class: "btn btn-primary  btn-sm", id:"event_update_action" %>
                     <%= button_tag "Delete", class: "btn btn-primary  btn-sm", id:"event_delete_action" %>
                     <%= button_tag "Repeat", class: "btn btn-primary  btn-sm", id:"event_repeat_action" %>
                 </div>
@@ -103,6 +97,12 @@
             extraFormats: [ format_str ],
             sideBySide: true
         });
+
+        $('#repeat_end').datetimepicker({
+            format: 'YYYY-MM-DD',
+            extraFormats: [ 'YYYY-MM-DD']
+        });
+
 
         function SetForm(event)
         {
@@ -160,6 +160,15 @@
             $("#new_event")[0].reset();
         }
 
+        $('#btn_top_create').click(function(){
+            $("#new_event")[0].reset();
+            $("#modal_header").text("New event");
+            $("#btn_update").hide();
+            $("#btn_create").show();
+            $('#dialog').modal("show");
+
+        });
+
 
         $('#btn_close').click(function(){
             close_modal();
@@ -203,6 +212,7 @@
                             notes: event.notes,
                             repeat_period: $("#repeat_period").val(),
                             repeat_quantity: $("#repeat_quantity").val(),
+                            repeat_end: $("#repeat_end").val(),
                             id: event.id
 
                         }
@@ -370,6 +380,8 @@
             defaultDate: '<%=DateTime.now.to_date%>',
             navLinks: true, // can click day/week names to navigate views
             selectable: true,
+            firstDay:1,
+            columnFormat:'ddd DD/MM',
             selectHelper: true,
             select: function(start, end) {
                 $("#new_event")[0].reset();

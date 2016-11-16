@@ -16,7 +16,7 @@
       <tr>
         <td class="text-right"><%=i%></td>
         <td><%= meetingtype.name %></td>
-        <td><%= link_to 'Edit', edit_meetingtype_path(meetingtype) %>, <%= link_to 'Destroy', meetingtype, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Edit', edit_meetingtype_path(meetingtype) %>, <%= link_to 'Delete', meetingtype, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
