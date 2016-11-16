@@ -1,0 +1,32 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 form-group">
+            <div class="input-group" id="DateDemo">
+                <input type='text' id='weeklyDatePicker' placeholder="Select Week"  style="width:200px;"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript">
+
+    var format_str='YYYY-MM-DD';
+
+
+
+    $(document).ready(function() {
+        $("#weeklyDatePicker").datetimepicker({
+            format: format_str,
+            extraFormats: [ format_str ],
+        });
+
+        //Get the value of Start and End of Week
+        $('#weeklyDatePicker').on('dp.change', function (e) {
+            value = $("#weeklyDatePicker").val();
+            firstDate = moment(value, format_str).day(0).format(format_str);
+            lastDate = moment(value, format_str).day(6).format(format_str);
+            $("#weeklyDatePicker").val(firstDate + "   -   " + lastDate);
+        });
+    });
+
+</script>

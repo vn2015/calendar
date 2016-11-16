@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get 'reports/weekly_activity'
+  get 'reports' =>'reports#index'
+
   resources :events
   resources :meetingtypes
   resources :clients

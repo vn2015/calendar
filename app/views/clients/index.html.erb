@@ -26,10 +26,120 @@
         <td><%= client.client_id %></td>
         <td class="text-right"><%= client.hours %></td>
         <td><%= client.notes %></td>
-        <td><%= link_to 'Edit', edit_client_path(client) %>, <%= link_to 'Destroy', client, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td>
+
+            <a href="#"  data-id="<%=client.id%>" class="client-activity" onclick="return false;">Activity</a>,
+            <%= link_to 'Edit', edit_client_path(client) %>,
+            <%= link_to 'Destroy', client, method: :delete, data: { confirm: 'Are you sure?' } %>
+        </td>
       </tr>
     <% end %>
   </tbody>
 </table>
 <%= will_paginate @meetingtypes , renderer: BootstrapPagination::Rails %>
 
+
+<div class="modal fade" id="client_activity_form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"  data-backdrop="static" data-keyboard="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title" >Client activity</h3>
+            </div>
+            <div class="modal-body">
+                    <div id="calendar"></div>
+                <div class="form-group text-right" style="margin-top: 10px;">
+                    <%= submit_tag "Close", class: "btn btn-default  btn-lg ", id:"btn_close" %>
+                    <input type="hidden" id="client_id" value="0">
+                </div>
+
+            </div>
+       </div><!-- /.modal-content -->
+   </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script language="JavaScript">
+
+   var format_str='YYYY-MM-DD hh:mm a';
+   var curr_client_id =0;
+   var curr_event_obj;
+
+
+
+   $(document).ready(function() {
+
+
+
+     $('#client_activity_form').on('shown.bs.modal', function () {
+       $("#calendar").fullCalendar('render');
+       $('#calendar').fullCalendar('refetchEvents');
+     });
+
+
+     $(".client-activity").click(function() {
+       $("#client_id").val($(this).data("id"));
+
+         $("#client_activity_form").modal("show");
+     });
+
+     $("#btn_close").click(function() {
+       $("#client_activity_form").modal("hide");
+       curr_client_id = 0;
+     });
+
+
+
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'l_listDay,l_listWeek,l_listMonth,l_ThreeMonts,l_listYeark'
+            },
+            views: {
+                l_ThreeMonts: {
+                    type: 'list',
+                    duration: { months: 3 },
+                    buttonText: '3 Month'
+                },
+                l_listDay:{
+                    type:'list',
+                    duration: {days: 1},
+                    buttonText: 'Day'
+                },
+                l_listWeek:{
+                  type:'list',
+                  duration: {weeks: 1},
+                  buttonText: 'Week'
+                },
+                l_listMonth:{
+                  type:'list',
+                  duration: {months: 1},
+                  buttonText: 'Month'
+                },
+                l_listYeark:{
+                  type:'list',
+                  duration: {years: 1},
+                  buttonText: 'Year'
+                }
+
+            },
+            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+            defaultView: 'l_listWeek',
+            defaultDate: '<%=DateTime.now.to_date%>',
+            navLinks: true, // can click day/week names to navigate views
+            selectable: true,
+          cache: false,
+            selectHelper: true,
+            eventLimit: true, // allow "more" link when too many events
+            events: {
+              url: '/events/',
+              data: function() { // a function that returns an object
+                return {
+                  client_id: $("#client_id").val()
+                };
+              }
+            }
+        });
+
+      });
+</script>

@@ -4,7 +4,9 @@ class EventsController < ApplicationController
   # GET /events
   # GET /events.json
   def index
-    @events = Event.where('start>=? and "end" <=? ', params[:start], params[:end]).all
+    @events = Event.where('start>=? and "end" <=? ', params[:start], params[:end])
+    @events=  @events.where('client_id = ?',params[:client_id]) if params[:client_id].present?
+    @events = @events.all
     @programs = Program.all
     @event = Event.new
     @clients = Client.all
