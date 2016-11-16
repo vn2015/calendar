@@ -101,11 +101,12 @@ class EventsController < ApplicationController
         @event.save
       end
 
-    end
+   end
+   count_hours
 
-    respond_to do |format|
+   respond_to do |format|
       format.json { render :show, status: :created, location: @event }
-    end
+   end
   end
 
   # PATCH/PUT /events/1
