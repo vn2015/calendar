@@ -7,6 +7,9 @@ class EventsController < ApplicationController
   def index
     @events = Event.where('start>=? and "end" <=? ', params[:start], params[:end])
     @events=  @events.where('client_id = ?',params[:client_id]) if params[:client_id].present?
+    @total_hours = 0
+    @total_hours = @events.sum('round((extract(epoch from "end" - start)/3600)::numeric,2)')if params[:client_id].present?
+
     @events = @events.all
     @programs = Program.all
     @event = Event.new
