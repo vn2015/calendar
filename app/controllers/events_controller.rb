@@ -39,7 +39,7 @@ class EventsController < ApplicationController
     @event = Event.new(event_params)
 
     if check_interval>0
-      render :json => { :errors => "Cannot Book, buffer time of about 59 minutes between meetings!"}, status: :no and return
+      render :json => { :errors => "Cannot Book, buffer time of about #{current_user.buffer_time} minutes between meetings!"}, status: :no and return
     end
     respond_to do |format|
       if @event.save
@@ -116,7 +116,7 @@ class EventsController < ApplicationController
   # PATCH/PUT /events/1.json
   def update
     if check_interval>0
-      render :json => { :errors => "Cannot Book, buffer time of about 59 minutes between meetings!"}, status: :no and return
+      render :json => { :errors => "Cannot Book, buffer time of about #{current_user.buffer_time} minutes between meetings!"}, status: :no and return
     end
 
     respond_to do |format|
@@ -166,7 +166,8 @@ class EventsController < ApplicationController
         client_id = client_id_orig
       end
 
-      date_end = date_end + 59.minutes
+      buffer_time = current_user.buffer_time
+      date_end = date_end + buffer_time.minutes
       date_end= date_end.strftime('%Y-%m-%d %I:%M %p')
       date_start= date_start.strftime('%Y-%m-%d %I:%M %p')
       count_cross_events = Event.where('start<=? and "end" >? and client_id = ? ',date_end,date_start,client_id)
@@ -178,7 +179,7 @@ class EventsController < ApplicationController
         else
           date_start = date_start_orig
         end
-        date_start = date_start - 59.minutes
+        date_start = date_start - buffer_time.minutes
         date_start= date_start.strftime('%Y-%m-%d %I:%M %p')
         count_cross_events = Event.where(' start<=? and "end" >=? and client_id =? ',date_start,date_start,client_id)
         count_cross_events = count_cross_events.where('id <> ?',params[:id]) if params[:id].present?
