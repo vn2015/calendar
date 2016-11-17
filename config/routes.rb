@@ -11,5 +11,6 @@ Rails.application.routes.draw do
   end
   post '/eventsrepeat' => 'events#repeat'
   get 'reports/weekly_activity'
+  get 'reports/weekly_activity_send'
   get 'reports' =>'reports#index'
 end

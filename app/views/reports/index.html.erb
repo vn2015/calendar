@@ -1,30 +1,66 @@
-<div class="container">
+<h1>Report</h1>
     <div class="row">
-        <div class="col-sm-6 form-group">
-            <div class="input-group" id="DateDemo">
-                <input type='text' id='weeklyDatePicker' placeholder="Select Week"  style="width:200px;"/>
+        <div class="col-sm-3 ">
+            <div class="form-group" id="DateDemo">
+                <label>Select  week</label>
+                <input type='text' id='weeklyDatePicker' onkeydown="return false"  placeholder="Select Week"  class="form-control "/>
+                <span class="add-on"><i class="icon-th"></i></span>
+                <input type='hidden' id='date_start' value="">
+                <input type='hidden' id='date_end' value="">
             </div>
+
+            <div class="form-group">
+                <%= submit_tag "Open report", class: "btn btn-primary  btn-bg", id:"btn_open" %>
+                <%= submit_tag "Send report", class: "btn btn-primary  btn-bg", id:"btn_send" %>
+            </div>
+
         </div>
     </div>
-</div>
 
 <script language="JavaScript">
 
     var format_str='YYYY-MM-DD';
 
-
-
     $(document).ready(function() {
+
+        moment.locale('ru');
+
+        $('#btn_open').click(function(){
+            if ($("#date_start").val()==""){
+                alert("Select the week");
+                return;
+            }
+            url = '<%=reports_weekly_activity_path%>.pdf?'
+            str_params='start='+$("#date_start").val()+'&end='+$("#date_end").val()
+            window.open(url+str_params)
+
+        });
+        $('#btn_send').click(function(){
+            if ($("#date_start").val()==""){
+                alert("Select the week");
+                return;
+            }
+            url = '<%=reports_weekly_activity_send_path %>?'
+            str_params='start='+$("#date_start").val()+'&end='+$("#date_end").val()
+            window.location.href = url+str_params
+
+        });
+
         $("#weeklyDatePicker").datetimepicker({
             format: format_str,
             extraFormats: [ format_str ],
         });
+        $("#weeklyDatePicker").val('');
+        $("#date_start").val('');
+        $("#date_end").val('');
 
         //Get the value of Start and End of Week
         $('#weeklyDatePicker').on('dp.change', function (e) {
             value = $("#weeklyDatePicker").val();
-            firstDate = moment(value, format_str).day(0).format(format_str);
-            lastDate = moment(value, format_str).day(6).format(format_str);
+            firstDate = moment(value, format_str).day(1).format(format_str);
+            lastDate = moment(value, format_str).day(7).format(format_str);
+            $("#date_start").val(firstDate);
+            $("#date_end").val(lastDate);
             $("#weeklyDatePicker").val(firstDate + "   -   " + lastDate);
         });
     });
