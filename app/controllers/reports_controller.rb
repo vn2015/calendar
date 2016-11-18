@@ -19,8 +19,13 @@ class ReportsController < ApplicationController
     template = File.read("#{Rails.root}/app/views/reports/weekly_activity.pdf.prawn")
     pdf = Prawn::Document.new
     events = weekly_activity_data
+    start_tmp = params[:start]
+    end_tmp = params[:end]
+
     pdf.instance_eval do
       @events = events
+      @start = start_tmp
+      @end = end_tmp
       eval(template) #this evaluates the template with your variables
     end
     attachment = pdf.render
