@@ -1,6 +1,7 @@
 class Event < ApplicationRecord
   belongs_to :client
   belongs_to :program
+  belongs_to :meetingtype
 
   validates :title, presence: true
   validates :client_id, presence: true

@@ -55,10 +55,16 @@ class MeetingtypesController < ApplicationController
   # DELETE /meetingtypes/1
   # DELETE /meetingtypes/1.json
   def destroy
-    @meetingtype.destroy
-    respond_to do |format|
-      format.html { redirect_to meetingtypes_url, notice: 'Meetingtype was successfully destroyed.' }
-      format.json { head :no_content }
+
+    event_count = @meetingtype.events.count
+    if event_count > 0
+      redirect_to meetingtypes_url, alert: 'Can\'t delete, meeting types has events.'
+    else
+      @meetingtype.destroy
+      respond_to do |format|
+        format.html { redirect_to meetingtypes_url, notice: 'Meetingtype was successfully destroyed.' }
+        format.json { head :no_content }
+      end
     end
   end
 
