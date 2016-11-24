@@ -16,9 +16,15 @@
       <%= f.label :name%>
       <%= f.text_field :name,  placeholder: 'Name', class: 'form-control', :required => true %>
   </div>
+
+  <div  class="form-group" >
+      <%= f.label :color%>
+      <%= f.text_field :color,  placeholder: 'Color', class: 'form-control ', :required => true %>
+  </div>
+
   <div class="form-group">
       <%= f.label :notes%>
-      <%= f.text_area :notes,  placeholder: 'Notes', class: 'form-control' %>
+      <%= f.text_area :notes,  placeholder: 'Notes', class: 'form-control' %>  <span class="add-on"><i style="background-color: rgb(255, 146, 180)"></i></span>
   </div>
 
   <div class="actions">
@@ -26,3 +32,13 @@
       <%= link_to 'Cancel', programs_path, class: "btn btn-default  btn-lg" %>
   </div>
 <% end %>
+
+<script language="JavaScript">
+ $(document).ready(function () {
+   $('#program_color').colorpicker();
+
+   $('#program_color').colorpicker().on('changeColor', function(ev){
+         $(this).css('color',ev.color.toHex());
+   });
+});
+</script>

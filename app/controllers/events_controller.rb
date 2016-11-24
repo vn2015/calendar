@@ -5,10 +5,12 @@ class EventsController < ApplicationController
   # GET /events
   # GET /events.json
   def index
-    @events = Event.where('start>=? and "end" <=? ', params[:start], params[:end])
+    @events =Event.select("events.*, color").joins(:program)
+    @events = @events.where('start>=? and "end" <=? ', params[:start], params[:end])
     @events=  @events.where('client_id = ?',params[:client_id]) if params[:client_id].present?
     @total_hours = 0
     @total_hours = @events.sum('round((extract(epoch from "end" - start)/3600)::numeric,2)')if params[:client_id].present?
+
 
     @events = @events.all
     @programs = Program.all
@@ -36,14 +38,18 @@ class EventsController < ApplicationController
   # POST /events
   # POST /events.json
   def create
-    @event = Event.new(event_params)
 
     if check_interval>0
       render :json => { :errors => "Cannot Book, buffer time of about #{current_user.buffer_time} minutes between meetings!"}, status: :no and return
     end
+    @event = Event.new(event_params)
+
+
+
     respond_to do |format|
       if @event.save
         count_hours
+        @event =Event.select("events.*, color").joins(:program).find(@event.id)
         format.html { redirect_to @event, notice: 'Event was successfully created.' }
         format.json { render :show, status: :created, location: @event }
       else
@@ -122,6 +128,7 @@ class EventsController < ApplicationController
     respond_to do |format|
       if @event.update(event_params)
         count_hours
+        @event =Event.select("events.*, color").joins(:program).find(@event.id)
         format.html { redirect_to @event, notice: 'Event was successfully updated.' }
         format.json { render :show, status: :ok, location: @event }
         #format.json {render :json => { :errors => check_interval}, status: :no}
@@ -195,7 +202,6 @@ class EventsController < ApplicationController
       client = Client.find(params[:event][:client_id])
       client.hours=total_hours
       client.save
-
     end
 
 end
