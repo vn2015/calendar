@@ -191,6 +191,7 @@ class EventsController < ApplicationController
 
     def count_hours
       total_hours = Event.where('client_id=?',params[:event][:client_id]).sum('round((extract(epoch from "end" - start)/3600)::numeric,2)')
+      total_hours = total_hours -1 if total_hours>=4
       client = Client.find(params[:event][:client_id])
       client.hours=total_hours
       client.save
