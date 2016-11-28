@@ -18,12 +18,16 @@ class ReportsController < ApplicationController
 
     template = File.read("#{Rails.root}/app/views/reports/weekly_activity.pdf.prawn")
     pdf = Prawn::Document.new
-    events = weekly_activity_data
+    clients = weekly_activity_data[0]["clients"]
+    programs = weekly_activity_data[0]["programs"]
+    client_programs = weekly_activity_data[0]["client_programs"]
     start_tmp = params[:start]
     end_tmp = params[:end]
 
     pdf.instance_eval do
-      @events = events
+      @clients = clients
+      @programs = programs
+      @client_programs = client_programs
       @start = start_tmp
       @end = end_tmp
       eval(template) #this evaluates the template with your variables
@@ -37,18 +41,29 @@ class ReportsController < ApplicationController
 
 
   def weekly_activity_data
-      @events = Event
+
       @start = params[:start]
       @end = params[:end]
       date_end = @end.to_date+1.days
       date_end = date_end.strftime('%Y-%m-%d')
 
-      sql = 'Select c.first_name || \' \'|| c.last_name as client_name, sum(round((extract(epoch from "end" - start)/3600)::numeric,2)) as total_hours '+
+      sql = 'Select c.first_name || \' \'|| c.last_name as client_name, sum(e.event_hours) as total_hours '+
           'from events e INNER JOIN clients c ON e.client_id=c.id'+
           ' WHERE e.start>=\''+@start+'\'  and e."end"<=\''+date_end+'\' GROUP BY e.client_id, c.first_name, c.last_name'
-      @events = ActiveRecord::Base.connection.execute(sql)
+      @clients = ActiveRecord::Base.connection.execute(sql)
 
-      return @events
+      sql = 'Select p.name, sum(e.event_hours) as total_hours '+
+          'from events e INNER JOIN programs p ON e.program_id=p.id'+
+          ' WHERE e.start>=\''+@start+'\'  and e."end"<=\''+date_end+'\' GROUP BY e.program_id, p.name'
+      @programs = ActiveRecord::Base.connection.execute(sql)
+
+      sql = 'Select p.name,c.first_name || \' \'|| c.last_name as client_name, c.id, sum(e.event_hours) as total_hours '+
+          'from events e INNER JOIN programs p ON e.program_id=p.id'+
+          ' INNER JOIN clients c ON e.client_id=c.id'+
+          ' WHERE e.start>=\''+@start+'\'  and e."end"<=\''+date_end+'\' GROUP BY  p.name,c.first_name, c.last_name,c.id order by c.id'
+      @client_programs = ActiveRecord::Base.connection.execute(sql)
+
+      return ['clients' =>@clients, 'programs' =>@programs, 'client_programs' => @client_programs]
 
   end
 
