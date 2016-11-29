@@ -61,7 +61,8 @@ class EventsController < ApplicationController
 
 
   def repeat
-    @event = Event.find(params[:event][:id])
+    @event =Event.select("events.*, color").joins(:program).find(params[:event][:id])
+    first_event = @event
     repeat_period = params[:event][:repeat_period]
     repeat_quantity = params[:event][:repeat_quantity].to_i
 
@@ -111,6 +112,7 @@ class EventsController < ApplicationController
       end
 
    end
+   @event = first_event
    count_hours
 
    respond_to do |format|
