@@ -106,6 +106,7 @@ class EventsController < ApplicationController
           address: params[:event][:address],
           transport: params[:event][:transport],
           notes: params[:event][:notes]
+          launch_break: params[:event][:launch_break]
         }
         @event = Event.new(event_params1)
         @event.save
