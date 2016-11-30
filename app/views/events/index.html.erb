@@ -86,6 +86,14 @@
 
     $(document).ready(function() {
 
+
+        $('#event_launch_break').keypress(function(event) {
+            if (!event.charCode) return true;
+            ch = String.fromCharCode(event.charCode);
+            return (/[\d]/.test(ch));
+        });
+
+
         $('#event_start').datetimepicker({
             format: format_str,
             extraFormats: [ format_str ],
@@ -115,6 +123,7 @@
             $("#event_address").val(event.address);
             $("#event_transport").val(event.transport);
             $("#event_notes").val(event.notes);
+            $("#event_launch_break").val(event.launch_break)
             $("#modal_header").text("Edit event");
             $("#btn_update").show();
             $("#btn_create").hide();
@@ -210,6 +219,7 @@
                             address: event.address,
                             transport: event.transport,
                             notes: event.notes,
+                            launch_break: event.launch_break,
                             repeat_period: $("#repeat_period").val(),
                             repeat_quantity: $("#repeat_quantity").val(),
                             repeat_end: $("#repeat_end").val(),
@@ -305,7 +315,8 @@
                         program_id: $("#program_id").val(),
                         address: $("#event_address").val(),
                         transport: $("#event_transport").val(),
-                        notes: $("#event_notes").val()
+                        notes: $("#event_notes").val(),
+                        launch_break: $("#event_launch_break").val()
                     }
                 }),
 
@@ -340,7 +351,9 @@
                             program_id: $("#program_id").val(),
                             address: $("#event_address").val(),
                             transport: $("#event_transport").val(),
-                            notes: $("#event_notes").val()
+                            notes: $("#event_notes").val(),
+                            launch_break: $("#event_launch_break").val()
+
                         }
                 }),
 

@@ -55,16 +55,11 @@ class ProgramsController < ApplicationController
   # DELETE /programs/1
   # DELETE /programs/1.json
   def destroy
-    event_count = @program.events.count
-    if event_count > 0
-      redirect_to programs_url, alert: 'Can\'t delete, program has events.'
-    else
       @program.destroy
       respond_to do |format|
-        format.html { redirect_to programs_url, notice: 'Program was successfully destroyed.' }
+        format.html { redirect_to programs_url, notice: 'Program was successfully deleted.' }
         format.json { head :no_content }
       end
-    end
   end
 
   private

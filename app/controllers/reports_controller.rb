@@ -21,8 +21,9 @@ class ReportsController < ApplicationController
     clients = weekly_activity_data[0]["clients"]
     programs = weekly_activity_data[0]["programs"]
     client_programs = weekly_activity_data[0]["client_programs"]
-    start_tmp = params[:start]
-    end_tmp = params[:end]
+    start_tmp = params[:start].to_date.strftime('%d-%m-%Y')
+    end_tmp = params[:end].to_date.strftime('%d-%m-%Y')
+
 
     pdf.instance_eval do
       @clients = clients
@@ -62,6 +63,10 @@ class ReportsController < ApplicationController
           ' INNER JOIN clients c ON e.client_id=c.id'+
           ' WHERE e.start>=\''+@start+'\'  and e."end"<=\''+date_end+'\' GROUP BY  p.name,c.first_name, c.last_name,c.id order by c.id'
       @client_programs = ActiveRecord::Base.connection.execute(sql)
+
+      @start = @start.to_date.strftime('%d-%m-%Y')
+      @end = @end.to_date.strftime('%d-%m-%Y')
+
 
       return ['clients' =>@clients, 'programs' =>@programs, 'client_programs' => @client_programs]
 

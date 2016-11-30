@@ -1,5 +1,5 @@
 class Client < ApplicationRecord
-  has_many :events
+  has_many :events,:dependent => :delete_all
 
   validates :first_name, presence: true
   validates :last_name, presence: true

@@ -30,7 +30,7 @@
 
             <a href="#"  data-id="<%=client.id%>" class="client-activity" onclick="return false;">Activity</a>,
             <%= link_to 'Edit', edit_client_path(client) %>,
-            <%= link_to 'Delete', client, method: :delete, data: { confirm: 'Are you sure?' } %>
+            <%= link_to 'Delete', client, method: :delete, data: { confirm: 'If this client has events, it will also be deleted. Are you sure you want to proceed?' } %>
         </td>
       </tr>
     <% end %>

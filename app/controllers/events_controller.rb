@@ -160,7 +160,7 @@ class EventsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def event_params
-      params.require(:event).permit(:title, :start, :end, :transport, :address, :client_id, :program_id, :meetingtype_id, :notes)
+      params.require(:event).permit(:title, :start, :end, :transport, :address, :client_id, :program_id, :meetingtype_id, :notes, :launch_break)
     end
 
     def check_interval(date_start_orig='', date_end_orig='',client_id_orig='')

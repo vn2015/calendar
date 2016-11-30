@@ -21,7 +21,7 @@
         <td><%= program.name %></td>
         <td bgcolor="<%= program.color %>"><%= program.color %></td>
         <td><%= program.notes %></td>
-        <td><%= link_to 'Edit', edit_program_path(program) %>, <%= link_to 'Delete', program, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Edit', edit_program_path(program) %>, <%= link_to 'Delete', program, method: :delete, data: { confirm: 'If this program has events, it will also be deleted. Are you sure you want to proceed?' } %></td>
       </tr>
     <% end %>
   </tbody>

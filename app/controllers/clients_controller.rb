@@ -55,16 +55,11 @@ class ClientsController < ApplicationController
   # DELETE /clients/1
   # DELETE /clients/1.json
   def destroy
-    event_count = @client.events.count
-    if event_count > 0
-      redirect_to clients_url, alert: 'Can\'t delete, client has events.'
-    else
       @client.destroy
       respond_to do |format|
-        format.html { redirect_to clients_url, notice: 'Client was successfully destroyed.' }
+        format.html { redirect_to clients_url, notice: 'Client was successfully deleted.' }
         format.json { head :no_content }
       end
-    end
   end
 
   private
