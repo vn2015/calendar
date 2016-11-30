@@ -56,13 +56,8 @@ a.btn-sm {
 .modal-title {
   color: #ffffff;
 }
-.modal-body {
-  overflow-y:auto;
-  max-height:650px;
-
-}
-.modal {
-  overflow-y:auto;
+.modal-content {
+  overflow:scroll;
   max-height:95%;
 
 }
