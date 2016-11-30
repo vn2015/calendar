@@ -380,16 +380,29 @@
             header: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'agendaDay,agendaWeek,month,timelineThreeMonts,timelineYear'
+                right: 'timeDay,timeWeek,month,timelineThreeMonts,timelineYear'
             },
             views: {
                 timelineThreeMonts: {
                     type: 'timeline',
-                    duration: { months: 3 }
-                }
+                    duration: { months: 3 },
+                    //titleFormat: 'dddd, d MMM, yyyy'
+
+                },
+                timeDay: {
+                    type: 'agenda',
+                    duration: { days: 1 },
+                    titleFormat: 'DD MMMM, YYYY'
+                },
+                timeWeek: {
+                    type: 'agenda',
+                    duration: { weeks: 1 },
+                    titleFormat: "DD MMM, YYYY"
+                },
+
             },
             schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-            defaultView: 'agendaWeek',
+            defaultView: 'timeWeek',
             defaultDate: '<%=DateTime.now.to_date%>',
             navLinks: true, // can click day/week names to navigate views
             selectable: true,

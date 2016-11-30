@@ -20,6 +20,7 @@
 <script language="JavaScript">
 
     var format_str='YYYY-MM-DD';
+    var format_str1='DD-MM-YYYY';
 
     $(document).ready(function() {
 
@@ -61,6 +62,8 @@
             lastDate = moment(value, format_str).day(7).format(format_str);
             $("#date_start").val(firstDate);
             $("#date_end").val(lastDate);
+            firstDate = moment(value, format_str).day(1).format(format_str1);
+            lastDate = moment(value, format_str).day(7).format(format_str1);
             $("#weeklyDatePicker").val(firstDate + "   -   " + lastDate);
         });
     });
