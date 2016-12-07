@@ -18,7 +18,7 @@
     <%= select_tag :meetingtype_id, options_from_collection_for_select(@meetingtypes, "id", "name"),  class: 'form-control', prompt: "Select the meeting type" , :required => true %>
   </div>
   <div class="form-group">
-    <%= select_tag :client_id, options_from_collection_for_select(@clients, "id", "combined_value"),  class: 'form-control', prompt: "Select the client" , :required => true %>
+    <%= select_tag :client_id, options_from_collection_for_select(@clients, "id", "combined_value"),  class: 'form-control', :multiple => true, :size => 5,  :required => true %>
   </div>
 
   <div class="form-group">
@@ -26,19 +26,22 @@
   </div>
 
 
-  <div class="form-group">
-    <%= f.label :start %>
-    <%= f.text_field :start, class: 'form-control',  :required => true %>
-  </div>
+  <div class="row">
+      <div class="col-xs-6">
+        <%= f.label :start %>
+        <%= f.text_field :start, class: 'form-control',  :required => true %>
+      </div>
 
-  <div class="form-group">
-    <%= f.label :end %>
-    <%= f.text_field :end, class: 'form-control', :required => true %>
+      <div class="col-xs-6">
+        <%= f.label :end %>
+        <%= f.text_field :end, class: 'form-control', :required => true %>
+      </div>
   </div>
   <div class="form-group">
     <%= f.label "Break Time (min)" %>
     <%= f.number_field :launch_break, class: 'form-control', :required => true %>
   </div>
+
   <div class="form-group">
     <%= f.text_field :transport, class: 'form-control', placeholder: 'Transport'%>
   </div>

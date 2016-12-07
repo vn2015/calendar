@@ -26,6 +26,19 @@
       <%= f.label :notes%>
       <%= f.text_area :notes,  placeholder: 'Notes', class: 'form-control' %>  <span class="add-on"><i style="background-color: rgb(255, 146, 180)"></i></span>
   </div>
+  <div class="form-group">
+      <%= f.check_box :is_paid %>
+      <%= f.label "This is a paid program"%>
+  </div>
+
+          <%= f.select(:is_paid, [['Type A', 'Type A'],
+                               ['Type B', 'Type B'],
+                               ['Type C', 'Type C'],
+                               ['Type D', 'Type D'],
+                               ['Type E', 'Type E']
+                            ],{ :prompt => "Please select"},
+                       { :multiple => true, :size => 5 }
+              ) %>
 
   <div class="actions">
       <%= f.submit class: "btn btn-primary  btn-lg" %>
@@ -40,5 +53,8 @@
    $('#program_color').colorpicker().on('changeColor', function(ev){
          $(this).css('color',ev.color.toHex());
    });
+
+
+
 });
 </script>

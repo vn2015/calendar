@@ -93,7 +93,9 @@
             return (/[\d]/.test(ch));
         });
 
-
+        $("#client_id").multiselect({
+            nonSelectedText: 'Select the client'
+        });
         $('#event_start').datetimepicker({
             format: format_str,
             extraFormats: [ format_str ],
@@ -167,6 +169,7 @@
             $('#dialog').modal("hide");
             $('#calendar').fullCalendar('unselect');
             $("#new_event")[0].reset();
+            $(".multiselect").html('Select the client')
         }
 
         $('#btn_top_create').click(function(){
