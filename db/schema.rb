@@ -10,21 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161206145631) do
+ActiveRecord::Schema.define(version: 20161207103712) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "clients", force: :cascade do |t|
-    t.date     "dob",                                                 null: false
-    t.text     "notes"
-    t.datetime "created_at",                                          null: false
-    t.datetime "updated_at",                                          null: false
-    t.string   "first_name"
-    t.string   "last_name"
-    t.string   "client_id"
-    t.decimal  "hours",      precision: 10, scale: 2, default: "0.0"
-  end
 
   create_table "events", force: :cascade do |t|
     t.string   "title"
@@ -32,7 +21,6 @@ ActiveRecord::Schema.define(version: 20161206145631) do
     t.datetime "end"
     t.string   "transport"
     t.string   "address"
-    t.integer  "client_id"
     t.integer  "program_id"
     t.datetime "created_at",                                              null: false
     t.datetime "updated_at",                                              null: false
@@ -40,7 +28,6 @@ ActiveRecord::Schema.define(version: 20161206145631) do
     t.text     "notes"
     t.decimal  "event_hours",    precision: 10, scale: 2, default: "0.0"
     t.integer  "launch_break",                            default: 0
-    t.index ["client_id"], name: "index_events_on_client_id", using: :btree
     t.index ["meetingtype_id"], name: "index_events_on_meetingtype_id", using: :btree
     t.index ["program_id"], name: "index_events_on_program_id", using: :btree
   end
@@ -60,27 +47,46 @@ ActiveRecord::Schema.define(version: 20161206145631) do
     t.integer  "is_paid"
   end
 
+  create_table "user_events", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "event_id"
+    t.decimal  "hours",      precision: 12, scale: 2, default: "0.0"
+    t.decimal  "earnings",   precision: 12, scale: 2, default: "0.0"
+    t.datetime "created_at",                                          null: false
+    t.datetime "updated_at",                                          null: false
+    t.index ["event_id"], name: "index_user_events_on_event_id", using: :btree
+    t.index ["user_id"], name: "index_user_events_on_user_id", using: :btree
+  end
+
   create_table "users", force: :cascade do |t|
-    t.string   "email",                  default: "", null: false
-    t.string   "encrypted_password",     default: "", null: false
+    t.string   "email",                                           default: "",    null: false
+    t.string   "encrypted_password",                              default: "",    null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,  null: false
+    t.integer  "sign_in_count",                                   default: 0,     null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
+    t.datetime "created_at",                                                      null: false
+    t.datetime "updated_at",                                                      null: false
     t.string   "username"
     t.string   "email_report"
     t.integer  "buffer_time"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.date     "dob"
+    t.decimal  "hours",                  precision: 12, scale: 2, default: "0.0"
+    t.decimal  "hourly_rate",            precision: 10, scale: 2, default: "0.0"
+    t.decimal  "earnings",               precision: 12, scale: 2, default: "0.0"
+    t.string   "client_id"
     t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
 
-  add_foreign_key "events", "clients"
   add_foreign_key "events", "meetingtypes"
   add_foreign_key "events", "programs"
+  add_foreign_key "user_events", "events"
+  add_foreign_key "user_events", "users"
 end
