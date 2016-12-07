@@ -80,6 +80,7 @@ ActiveRecord::Schema.define(version: 20161207103712) do
     t.decimal  "hours",                  precision: 12, scale: 2, default: "0.0"
     t.decimal  "hourly_rate",            precision: 10, scale: 2, default: "0.0"
     t.decimal  "earnings",               precision: 12, scale: 2, default: "0.0"
+    t.text     "notes"
     t.string   "client_id"
     t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree

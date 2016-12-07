@@ -15,7 +15,9 @@ class ApplicationController < ActionController::Base
   end
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:account_update, keys: [:username,:email_report,:buffer_time])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:email_report,:buffer_time,:dob, :first_name, :last_name,:notes ])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:email_report,:buffer_time,:dob, :first_name, :last_name,:notes ])
+
   end
 
 end

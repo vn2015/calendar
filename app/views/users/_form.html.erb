@@ -21,6 +21,26 @@
      <%= f.label :last_name %>
      <%= f.text_field :last_name, placeholder: 'Last name', class: 'form-control', :required => true %>
   </div>
+
+  <div class="form-group">
+     <%= f.label "Email (as username)" %>
+     <%= f.text_field :email, placeholder: 'email', class: 'form-control', :required => true %>
+  </div>
+
+  <div class="form-group">
+     <%= f.label :password %>
+     <%= f.password_field :password, autocomplete: "off", class: 'form-control',help: "Must be at least 6 characters long" %>
+  </div>
+  <div class="form-group">
+     <%= f.label :password_confirmation %>
+     <%= f.text_field :password_confirmation, placeholder: :password_confirmation, class: 'form-control', :required => true %>
+  </div>
+
+
+
+
+
+
   <div class="form-group">
       <%= f.label :dob %>
       <%= f.text_field :dob, placeholder: 'Date of birth', class: 'form-control',  :required => true %>
@@ -37,13 +57,13 @@
 
    <div class="actions">
       <%= f.submit class: "btn btn-primary  btn-lg" %>
-      <%= link_to 'Cancel', clients_path, class: "btn btn-default  btn-lg" %>
+      <%= link_to 'Cancel', users_path, class: "btn btn-default  btn-lg" %>
    </div>
 <% end %>
 
           <script language="JavaScript">
             $(document).ready(function () {
-              $('#client_dob').datetimepicker({
+              $('#user_dob').datetimepicker({
                   format: 'YYYY-MM-DD',
                   extraFormats: [ 'YYYY-MM-DD' ]
               });

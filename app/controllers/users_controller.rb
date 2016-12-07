@@ -1,11 +1,11 @@
-class ClientsController < ApplicationController
+class UsersController < ApplicationController
   before_action :set_client, only: [:show, :edit, :update, :destroy]
   before_filter :authenticate_user!
 
   # GET /clients
   # GET /clients.json
   def index
-    @clients = Client.all.paginate(:page => params[:page])
+    @clients = User.all.paginate(:page => params[:page])
   end
 
   # GET /clients/1
@@ -15,7 +15,7 @@ class ClientsController < ApplicationController
 
   # GET /clients/new
   def new
-    @client = Client.new
+    @client = User.new
   end
 
   # GET /clients/1/edit
@@ -25,7 +25,7 @@ class ClientsController < ApplicationController
   # POST /clients
   # POST /clients.json
   def create
-    @client = Client.new(client_params)
+    @client = User.new(client_params)
 
     respond_to do |format|
       if @client.save
@@ -43,7 +43,7 @@ class ClientsController < ApplicationController
   def update
     respond_to do |format|
       if @client.update(client_params)
-        format.html { redirect_to clients_path, notice: 'Client was successfully updated.' }
+        format.html { redirect_to users_path, notice: 'Client was successfully updated.' }
         format.json { render :show, status: :ok, location: @client }
       else
         format.html { render :edit }
@@ -57,7 +57,7 @@ class ClientsController < ApplicationController
   def destroy
       @client.destroy
       respond_to do |format|
-        format.html { redirect_to clients_url, notice: 'Client was successfully deleted.' }
+        format.html { redirect_to users_url, notice: 'Client was successfully deleted.' }
         format.json { head :no_content }
       end
   end
@@ -65,11 +65,11 @@ class ClientsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_client
-      @client = Client.find(params[:id])
+      @client = User.find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def client_params
-      params.require(:client).permit(:first_name,:last_name, :dob, :notes, :client_id)
+      params.require(:user).permit(:first_name,:last_name, :dob, :notes, :client_id)
     end
 end

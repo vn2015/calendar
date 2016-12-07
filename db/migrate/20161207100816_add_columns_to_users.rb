@@ -6,5 +6,7 @@ class AddColumnsToUsers < ActiveRecord::Migration[5.0]
     add_column :users, :hours, :decimal, :default => 0, :precision => 12, :scale => 2
     add_column :users, :hourly_rate, :decimal, :default => 0, :precision => 10, :scale => 2
     add_column :users, :earnings, :decimal, :default => 0, :precision => 12, :scale => 2
+    add_column :users, :notes, :text
+
   end
 end
