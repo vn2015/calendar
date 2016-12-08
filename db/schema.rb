@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161208152716) do
+ActiveRecord::Schema.define(version: 20161208153447) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,10 @@ ActiveRecord::Schema.define(version: 20161208152716) do
     t.text     "notes"
     t.decimal  "event_hours",    precision: 10, scale: 2, default: "0.0"
     t.integer  "launch_break",                            default: 0
+    t.date     "date_start"
+    t.date     "date_end"
+    t.index ["date_end"], name: "index_events_on_date_end", using: :btree
+    t.index ["date_start"], name: "index_events_on_date_start", using: :btree
     t.index ["meetingtype_id"], name: "index_events_on_meetingtype_id", using: :btree
     t.index ["program_id"], name: "index_events_on_program_id", using: :btree
   end

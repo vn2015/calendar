@@ -14,5 +14,7 @@ class Event < ApplicationRecord
   def calculate_hours
     total_hours =((self.end.to_time - self.start.to_time - self.launch_break.minutes)/3600).round(2)
     self.event_hours = total_hours
+    self.date_start = self.start
+    self.date_end = self.end
   end
 end
