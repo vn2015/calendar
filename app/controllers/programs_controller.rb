@@ -5,7 +5,7 @@ class ProgramsController < ApplicationController
   # GET /programs
   # GET /programs.json
   def index
-    @programs = Program.all.paginate(:page => params[:page])
+    @programs = Program.all.paginate(:page => params[:page]).order(:id)
   end
 
   # GET /programs/1

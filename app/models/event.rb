@@ -1,12 +1,12 @@
 class Event < ApplicationRecord
-  belongs_to :client
   belongs_to :program
   belongs_to :meetingtype
+  has_many :user_events
+  has_many :users, :through => :user_events
 
   before_save :calculate_hours
 
   validates :title, presence: true
-  validates :client_id, presence: true
   validates :program_id, presence: true
   validates :launch_break, presence: true
 

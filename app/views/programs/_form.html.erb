@@ -30,16 +30,6 @@
       <%= f.check_box :is_paid %>
       <%= f.label "This is a paid program"%>
   </div>
-
-          <%= f.select(:is_paid, [['Type A', 'Type A'],
-                               ['Type B', 'Type B'],
-                               ['Type C', 'Type C'],
-                               ['Type D', 'Type D'],
-                               ['Type E', 'Type E']
-                            ],{ :prompt => "Please select"},
-                       { :multiple => true, :size => 5 }
-              ) %>
-
   <div class="actions">
       <%= f.submit class: "btn btn-primary  btn-lg" %>
       <%= link_to 'Cancel', programs_path, class: "btn btn-default  btn-lg" %>

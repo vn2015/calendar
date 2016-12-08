@@ -1,21 +1,21 @@
 class EventsController < ApplicationController
   before_action :set_event, only: [:show, :edit, :update, :destroy]
-  before_filter :authenticate_user!
+  before_action :authenticate_user!
 
   # GET /events
   # GET /events.json
   def index
-    @events =Event.select("events.*, color").joins(:program)
+    @events =Event.select("events.*, color").joins(:program).joins(:users)
     @events = @events.where('start>=? and "end" <=? ', params[:start], params[:end])
     @events=  @events.where('client_id = ?',params[:client_id]) if params[:client_id].present?
     @total_hours = 0
     @total_hours = @events.sum('round((extract(epoch from "end" - start)/3600)::numeric,2)')if params[:client_id].present?
 
 
-    @events = @events.all
+    @events = @events.all.order(:id)
     @programs = Program.all
     @event = Event.new
-    @clients = Client.all
+    @clients = getUser.all
     @meetingtypes = Meetingtype.all
   end
 
@@ -39,16 +39,25 @@ class EventsController < ApplicationController
   # POST /events.json
   def create
 
-    if check_interval>0
-      render :json => { :errors => "Cannot Book, buffer time of about #{current_user.buffer_time} minutes between meetings!"}, status: :no and return
-    end
+    #if check_interval>0
+    #  render :json => { :errors => "Cannot Book, buffer time of about #{current_user.buffer_time} minutes between meetings!"}, status: :no and return
+    #end
     @event = Event.new(event_params)
 
 
 
     respond_to do |format|
       if @event.save
-        count_hours
+
+
+        params[:event][:client_id].each do |user|
+          ue =UserEvent.new
+          ue.user_id =user
+          ue.event_id = @event.id
+          ue.save
+        end
+
+       # count_hours
         @event =Event.select("events.*, color").joins(:program).find(@event.id)
         format.html { redirect_to @event, notice: 'Event was successfully created.' }
         format.json { render :show, status: :created, location: @event }
@@ -161,7 +170,7 @@ class EventsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def event_params
-      params.require(:event).permit(:title, :start, :end, :transport, :address, :client_id, :program_id, :meetingtype_id, :notes, :launch_break)
+      params.require(:event).permit(:title, :start, :end, :transport, :address,  :program_id, :meetingtype_id, :notes, :launch_break)
     end
 
     def check_interval(date_start_orig='', date_end_orig='',client_id_orig='')

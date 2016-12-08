@@ -1,1 +1,1 @@
-json.partial! "clients/client", client: @client
+json.partial! "users/user", user: @user

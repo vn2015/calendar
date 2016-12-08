@@ -2,18 +2,18 @@
 
 <p>
   <strong>Name:</strong>
-  <%= @client.name %>
+  <%= @user.username %>
 </p>
 
 <p>
   <strong>Dob:</strong>
-  <%= @client.dob %>
+  <%= @user.dob %>
 </p>
 
 <p>
   <strong>Notes:</strong>
-  <%= @client.notes %>
+  <%= @user.notes %>
 </p>
 
-<%= link_to 'Edit', edit_client_path(@client) %> |
-<%= link_to 'Back', clients_path %>
+<%= link_to 'Edit', edit_user_path(@user) %> |
+<%= link_to 'Back', users_path %>

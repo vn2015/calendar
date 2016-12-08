@@ -8,6 +8,7 @@
       <th>Last Name</th>
       <th>Dob</th>
       <th>Client ID</th>
+      <th>Rate</th>
       <th>Hours</th>
       <th>Notes</th>
       <th class="col-sm-1">Action</th>
@@ -16,27 +17,28 @@
 
   <tbody>
     <% i = 0 %>
-    <% @clients.each do |client| %>
+    <% @users.each do |user| %>
       <% i += 1 %>
       <tr>
         <td class="text-right"><%=i%></td>
-        <td><%= client.first_name %></td>
-        <td><%= client.last_name %></td>
-        <td><%= client.dob %></td>
-        <td><%= client.client_id %></td>
-        <td class="text-right"><%= client.hours %></td>
-        <td><%= client.notes %></td>
+        <td><%= user.first_name %></td>
+        <td><%= user.last_name %></td>
+        <td><%= user.dob %></td>
+        <td><%= user.client_id %></td>
+        <td class="text-right"><%= user.hourly_rate %></td>
+        <td class="text-right"><%= user.hours %></td>
+        <td><%= user.notes %></td>
         <td>
 
-            <a href="#"  data-id="<%=client.id%>" class="client-activity" onclick="return false;">Activity</a>,
-            <%= link_to 'Edit', edit_user_path(client) %>,
-            <%= link_to 'Delete', client, method: :delete, data: { confirm: 'If this client has events, it will also be deleted. Are you sure you want to proceed?' } %>
+            <a href="#"  data-id="<%=user.id%>" class="client-activity" onclick="return false;">Activity</a>,
+            <%= link_to 'Edit', edit_user_path(user) %>,
+            <%= link_to 'Delete', user, method: :delete, data: { confirm: 'If this client has events, it will also be deleted. Are you sure you want to proceed?' } %>
         </td>
       </tr>
     <% end %>
   </tbody>
 </table>
-<%= will_paginate @clients , renderer: BootstrapPagination::Rails %>
+<%= will_paginate @users , renderer: BootstrapPagination::Rails %>
 
 
 <div class="modal fade" id="client_activity_form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"  data-backdrop="static" data-keyboard="true">
