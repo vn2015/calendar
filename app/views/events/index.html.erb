@@ -86,7 +86,7 @@
 
     $(document).ready(function() {
 
-
+        $(".multiselect").html('Select the client');
         $('#event_launch_break').keypress(function(event) {
             if (!event.charCode) return true;
             ch = String.fromCharCode(event.charCode);
@@ -129,6 +129,11 @@
             $("#modal_header").text("Edit event");
             $("#btn_update").show();
             $("#btn_create").hide();
+            client_ids = event.client_id
+            for (i in client_ids) {
+                $("#client_id option[value='"+client_ids[i]+"'").attr("selected", true);
+            }
+            $('#client_id').multiselect('refresh');
         }
 
         function CheckForm()
@@ -246,7 +251,7 @@
             }
         });
 
-
+/*
         $("#event_update_action").click(function(){
             $("#modal_header").text("Edit event");
             $("#btn_update").show();
@@ -256,7 +261,7 @@
             $('#select_action').modal("hide");
             $('#dialog').modal("show");
         });
-
+*/
         $("#event_update_action").click(function(){
             $("#modal_header").text("Edit event");
             $("#btn_update").show();

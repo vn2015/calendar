@@ -5,12 +5,12 @@ class EventsController < ApplicationController
   # GET /events
   # GET /events.json
   def index
-    @events =Event.select("events.*, color").joins(:program).joins(:users)
+    @events = Event.select("events.*, color, array_agg(users.id) client_id").joins(:program).joins(:users)
     @events = @events.where('start>=? and "end" <=? ', params[:start], params[:end])
     @events=  @events.where('client_id = ?',params[:client_id]) if params[:client_id].present?
+    @events = @events.group('events.id, programs.color')
     @total_hours = 0
     @total_hours = @events.sum('round((extract(epoch from "end" - start)/3600)::numeric,2)')if params[:client_id].present?
-
 
     @events = @events.all.order(:id)
     @programs = Program.all
@@ -133,14 +133,23 @@ class EventsController < ApplicationController
   # PATCH/PUT /events/1
   # PATCH/PUT /events/1.json
   def update
-    if check_interval>0
-      render :json => { :errors => "Cannot Book, buffer time of about #{current_user.buffer_time} minutes between meetings!"}, status: :no and return
-    end
+    #if check_interval>0
+    #  render :json => { :errors => "Cannot Book, buffer time of about #{current_user.buffer_time} minutes between meetings!"}, status: :no and return
+    #end
 
     respond_to do |format|
       if @event.update(event_params)
-        count_hours
-        @event =Event.select("events.*, color").joins(:program).find(@event.id)
+
+        @event.user_events.destroy_all
+
+        params[:event][:client_id].each do |user|
+          ue =UserEvent.new
+          ue.user_id =user
+          ue.event_id = @event.id
+          ue.save
+        end
+        #count_hours
+        @event =Event.select("events.*, color, array_agg(users.id) client_id").joins(:program).joins(:users).group('events.id, programs.color').find(@event.id)
         format.html { redirect_to @event, notice: 'Event was successfully updated.' }
         format.json { render :show, status: :ok, location: @event }
         #format.json {render :json => { :errors => check_interval}, status: :no}
