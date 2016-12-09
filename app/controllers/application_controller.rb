@@ -38,7 +38,7 @@ class ApplicationController < ActionController::Base
   end
 
    def getReportEmail
-     @report_email ||= Setting.first()["report_email"]
+     @report_email ||= Setting.first()["email_report"]
    end
 
 

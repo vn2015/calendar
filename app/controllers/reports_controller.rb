@@ -35,7 +35,8 @@ class ReportsController < ApplicationController
       eval(template) #this evaluates the template with your variables
     end
     attachment = pdf.render
-    UserMailer.report_email(attachment,current_user.email_report).deliver_now
+    email_report = getReportEmail
+    UserMailer.report_email(attachment,email_report).deliver_now
 
     flash.notice = "Email sended"
     redirect_to reports_path
@@ -49,20 +50,21 @@ class ReportsController < ApplicationController
       date_end = @end.to_date+1.days
       date_end = date_end.strftime('%Y-%m-%d')
 
-      sql = 'Select c.first_name || \' \'|| c.last_name as client_name, sum(e.event_hours) as total_hours '+
-          'from events e INNER JOIN clients c ON e.client_id=c.id'+
-          ' WHERE e.start>=\''+@start+'\'  and e."end"<=\''+date_end+'\' GROUP BY e.client_id, c.first_name, c.last_name'
+      sql = 'Select username as client_name, sum(ue.hours) as total_hours, sum(ue.earnings) as total_earnings '+
+          'from events e INNER JOIN user_events ue  ON ue.event_id = e.id INNER JOIN users u ON u.id = ue.user_id '+
+          ' WHERE e.date_start>=\''+@start+'\'  and e.date_end<=\''+date_end+'\' GROUP BY u.id, u.username'
       @clients = ActiveRecord::Base.connection.execute(sql)
 
-      sql = 'Select p.name, sum(e.event_hours) as total_hours '+
+      sql = 'Select p.name, sum(ue.hours) as total_hours, sum(ue.earnings) as total_earnings '+
           'from events e INNER JOIN programs p ON e.program_id=p.id'+
-          ' WHERE e.start>=\''+@start+'\'  and e."end"<=\''+date_end+'\' GROUP BY e.program_id, p.name'
+          ' INNER JOIN user_events ue  ON ue.event_id = e.id '+
+          ' WHERE e.date_start>=\''+@start+'\'  and e.date_end<=\''+date_end+'\' GROUP BY e.program_id, p.name'
       @programs = ActiveRecord::Base.connection.execute(sql)
 
-      sql = 'Select p.name,c.first_name || \' \'|| c.last_name as client_name, c.id, sum(e.event_hours) as total_hours '+
+      sql = 'Select p.name,u.username as client_name, u.id, sum(ue.hours) as total_hours, sum(ue.earnings) as total_earnings '+
           'from events e INNER JOIN programs p ON e.program_id=p.id'+
-          ' INNER JOIN clients c ON e.client_id=c.id'+
-          ' WHERE e.start>=\''+@start+'\'  and e."end"<=\''+date_end+'\' GROUP BY  p.name,c.first_name, c.last_name,c.id order by c.id'
+          ' INNER JOIN user_events ue  ON ue.event_id = e.id INNER JOIN users u ON u.id = ue.user_id'+
+          ' WHERE e.date_start>=\''+@start+'\'  and e.date_end<=\''+date_end+'\' GROUP BY  p.name, u.username, u.id order by u.id'
       @client_programs = ActiveRecord::Base.connection.execute(sql)
 
       @start = @start.to_date.strftime('%d-%m-%Y')
