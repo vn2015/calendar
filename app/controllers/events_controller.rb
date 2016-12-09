@@ -5,12 +5,22 @@ class EventsController < ApplicationController
   # GET /events
   # GET /events.json
   def index
-    @events = Event.select("events.*, color, array_agg(users.id) client_id").joins(:program).joins(:users)
-    @events = @events.where('start>=? and "end" <=? ', params[:start], params[:end])
-    @events=  @events.where('client_id = ?',params[:client_id]) if params[:client_id].present?
+    @events = Event.select("events.*, color, array_agg(users.id) client_id").joins(:program)
+    @events = @events.joins("LEFT JOIN user_events ON user_events.event_id = events.id LEFT JOIN users ON users.id = user_events.user_id")
+    @events = @events.where('date_start>=? and "date_end" <=? ', params[:start], params[:end])
+    @events=  @events.where('user_events.user_id = ?',current_user.id) if !IsAdmin?
+    @events=  @events.where('user_events.user_id = ?',params[:client_id]) if params[:client_id].present?
     @events = @events.group('events.id, programs.color')
+
+    @client_total_hours = Event.select("sum(user_events.hours) as hours, sum (user_events.earnings) as earnings ").joins("LEFT JOIN user_events ON user_events.event_id = events.id")
+    @client_total_hours = @client_total_hours.where('user_events.user_id = ?',params[:client_id])
+    @client_total_hours = @client_total_hours.where('date_start>=? and "date_end" <=? ', params[:start], params[:end])
+
     @total_hours = 0
-    @total_hours = @events.sum('round((extract(epoch from "end" - start)/3600)::numeric,2)')if params[:client_id].present?
+    if params[:client_id].present?
+      @total_hours = @client_total_hours.all
+      @total_hours=@total_hours[0][:hours]
+    end
 
     @events = @events.all.order(:id)
     @programs = Program.all
@@ -39,9 +49,10 @@ class EventsController < ApplicationController
   # POST /events.json
   def create
 
-    #if check_interval>0
-    #  render :json => { :errors => "Cannot Book, buffer time of about #{current_user.buffer_time} minutes between meetings!"}, status: :no and return
-    #end
+    if check_interval>0
+      buffer_time =getBufferTime
+      render :json => { :errors => "Cannot Book, buffer time of about #{buffer_time} minutes between meetings!"}, status: :no and return
+    end
     @event = Event.new(event_params)
 
 
@@ -57,8 +68,8 @@ class EventsController < ApplicationController
           ue.save
         end
 
-       # count_hours
-        @event =Event.select("events.*, color").joins(:program).find(@event.id)
+        count_hours
+        @event =Event.select("events.*, color, array_agg(users.id) client_id").joins(:program).joins("LEFT JOIN user_events ON user_events.event_id = events.id LEFT JOIN users ON users.id = user_events.user_id").group('events.id, programs.color').find(@event.id)
         format.html { redirect_to @event, notice: 'Event was successfully created.' }
         format.json { render :show, status: :created, location: @event }
       else
@@ -70,7 +81,7 @@ class EventsController < ApplicationController
 
 
   def repeat
-    @event =Event.select("events.*, color").joins(:program).find(params[:event][:id])
+    @event =Event.select("events.*, color, array_agg(users.id) client_id").joins(:program).joins("LEFT JOIN user_events ON user_events.event_id = events.id LEFT JOIN users ON users.id = user_events.user_id").group('events.id, programs.color').find(params[:event][:id])
     first_event = @event
     repeat_period = params[:event][:repeat_period]
     repeat_quantity = params[:event][:repeat_quantity].to_i
@@ -110,7 +121,6 @@ class EventsController < ApplicationController
           start: start_date,
           end: end_date,
           meetingtype_id: params[:event][:meetingtype_id],
-          client_id: params[:event][:client_id],
           program_id: params[:event][:program_id],
           address: params[:event][:address],
           transport: params[:event][:transport],
@@ -119,6 +129,14 @@ class EventsController < ApplicationController
         }
         @event = Event.new(event_params1)
         @event.save
+
+        params[:event][:client_id].each do |user|
+          ue =UserEvent.new
+          ue.user_id =user
+          ue.event_id = @event.id
+          ue.save
+        end
+
       end
 
    end
@@ -129,6 +147,7 @@ class EventsController < ApplicationController
       format.json { render :show, status: :created, location: @event }
    end
   end
+
 
   # PATCH/PUT /events/1
   # PATCH/PUT /events/1.json
@@ -148,8 +167,8 @@ class EventsController < ApplicationController
           ue.event_id = @event.id
           ue.save
         end
-        #count_hours
-        @event =Event.select("events.*, color, array_agg(users.id) client_id").joins(:program).joins(:users).group('events.id, programs.color').find(@event.id)
+        count_hours
+        @event = Event.select("events.*, color, array_agg(users.id) client_id").joins(:program).joins("LEFT JOIN user_events ON user_events.event_id = events.id LEFT JOIN users ON users.id = user_events.user_id").group('events.id, programs.color').find(@event.id)
         format.html { redirect_to @event, notice: 'Event was successfully updated.' }
         format.json { render :show, status: :ok, location: @event }
         #format.json {render :json => { :errors => check_interval}, status: :no}
@@ -194,11 +213,12 @@ class EventsController < ApplicationController
         client_id = client_id_orig
       end
 
-      buffer_time = current_user.buffer_time
+
+      buffer_time = getBufferTime
       date_end = date_end + buffer_time.minutes
       date_end= date_end.strftime('%Y-%m-%d %I:%M %p')
       date_start= date_start.strftime('%Y-%m-%d %I:%M %p')
-      count_cross_events = Event.where('start<=? and "end" >? and client_id = ? ',date_end,date_start,client_id)
+      count_cross_events = Event.joins("LEFT JOIN user_events ON user_events.event_id = events.id LEFT JOIN users ON users.id = user_events.user_id").where('start<=? and "end" >? and user_id in( ?) ',date_end,date_start,client_id)
       count_cross_events = count_cross_events.where('id <> ?',params[:id]) if params[:id].present?
       count_cross_events = count_cross_events.count
       if count_cross_events ===0
@@ -209,7 +229,7 @@ class EventsController < ApplicationController
         end
         date_start = date_start - buffer_time.minutes
         date_start= date_start.strftime('%Y-%m-%d %I:%M %p')
-        count_cross_events = Event.where(' start<=? and "end" >=? and client_id =? ',date_start,date_start,client_id)
+        count_cross_events = Event.joins("LEFT JOIN user_events ON user_events.event_id = events.id LEFT JOIN users ON users.id = user_events.user_id").where(' start<=? and "end" >=? and user_id  in(?) ',date_start,date_start,client_id)
         count_cross_events = count_cross_events.where('id <> ?',params[:id]) if params[:id].present?
         count_cross_events = count_cross_events.count
       end
@@ -218,10 +238,13 @@ class EventsController < ApplicationController
     end
 
     def count_hours
-      total_hours = Event.where('client_id=?',params[:event][:client_id]).sum('event_hours')
-      client = Client.find(params[:event][:client_id])
-      client.hours=total_hours
-      client.save
+      params[:event][:client_id].each do |user|
+        total_hours = UserEvent.where('user_id=?',user).sum(:hours)
+        client = User.find(user)
+        client.hours = total_hours
+        client.save
+      end
+
     end
 
 end

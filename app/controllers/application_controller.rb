@@ -2,7 +2,16 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :configure_permitted_parameters, if: :devise_controller?
 
+  helper_method :IsAdmin?
+  helper_method :CheckAccess?
+
   WillPaginate.per_page = 10
+
+
+
+
+
+
 
   protected
 
@@ -23,5 +32,30 @@ class ApplicationController < ActionController::Base
   def getUser
     User.where(is_admin:false)
   end
+
+  def getBufferTime
+    return @buffer_time ||= Setting.first()["buffer_time"]
+  end
+
+   def getReportEmail
+     @report_email ||= Setting.first()["report_email"]
+   end
+
+
+   def IsAdmin?
+    if current_user.is_admin==true
+      return true
+    else
+      return false
+    end
+   end
+
+   def CheckAccess?
+     if !IsAdmin?
+       redirect_to events_path, alert: 'Access denied!'
+     end
+   end
+
+
 
 end

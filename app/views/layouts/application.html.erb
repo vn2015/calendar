@@ -63,16 +63,17 @@
         <div class="navbar-collapse collapse navbar-responsive-collapse">
         <%
            if user_signed_in?
+            if IsAdmin?
         %>
-
-          <ul class="nav navbar-nav">
-            <li><%= link_to "Programs", programs_path %></li>
-            <li><%= link_to "Clients", users_path %></li>
-            <li><%= link_to "Meeting types", meetingtypes_path %></li>
-            <li><%= link_to "Report", reports_path %></li>
-            <li><%= link_to "Settings", settings_path %></li>
-            <li><%= link_to "Profile",  edit_user_registration_path %></li>
-          </ul>
+            <ul class="nav navbar-nav">
+              <li><%= link_to "Programs", programs_path %></li>
+              <li><%= link_to "Clients", users_path %></li>
+              <li><%= link_to "Meeting types", meetingtypes_path %></li>
+              <li><%= link_to "Report", reports_path %></li>
+              <li><%= link_to "Settings", settings_path %></li>
+              <li><%= link_to "Profile",  edit_user_registration_path %></li>
+            </ul>
+            <%end%>
         <%end%>
           <div class="nav "  id="sign_in">
                 <ul class="nav navbar-nav">

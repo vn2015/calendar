@@ -1,6 +1,8 @@
 <div class="row">
     <div class="col-md-2 col-sm-6 col-xs-6"><h1>Events</h1></div>
-    <div class="col-md-10 col-sm-6 col-xs-6" ><%= submit_tag "Create Event", class: "btn btn-primary  btn-іь", id:"btn_top_create",style: "margin-top:25px;" %></div>
+    <% if IsAdmin? %>
+        <div class="col-md-10 col-sm-6 col-xs-6" ><%= submit_tag "Create Event", class: "btn btn-primary  btn-іь", id:"btn_top_create",style: "margin-top:25px;" %></div>
+    <% end %>
 </div>
 <div class="row">
 
@@ -87,6 +89,7 @@
     $(document).ready(function() {
 
         $(".multiselect").html('Select the client');
+
         $('#event_launch_break').keypress(function(event) {
             if (!event.charCode) return true;
             ch = String.fromCharCode(event.charCode);
@@ -171,10 +174,11 @@
 
         function close_modal()
         {
+            $(".multiselect").html('Select the client')
             $('#dialog').modal("hide");
             $('#calendar').fullCalendar('unselect');
             $("#new_event")[0].reset();
-            $(".multiselect").html('Select the client')
+
         }
 
         $('#btn_top_create').click(function(){
@@ -413,10 +417,8 @@
             defaultView: 'timeWeek',
             defaultDate: '<%=DateTime.now.to_date%>',
             navLinks: true, // can click day/week names to navigate views
-            selectable: true,
             firstDay:1,
             columnFormat:'ddd DD/MM',
-            selectHelper: true,
             select: function(start, end) {
                 $("#new_event")[0].reset();
                 $("#event_start").val(moment(start).format(format_str));
@@ -426,14 +428,19 @@
                 $("#btn_create").show();
                 $('#dialog').modal("show");
             },
-            eventClick: function(event, jsEvent, view) {
-                curr_event_id = event.id;
-                curr_event_obj =event;
-                $('#select_action').modal("show");
-                //$('#dialog').modal("show");
-                //$(this).css('border-color', 'red');
+            <% if IsAdmin? %>
+                selectable: true,
+                selectHelper: true,
+                editable: true,
+                eventClick: function(event, jsEvent, view) {
+                    curr_event_id = event.id;
+                    curr_event_obj =event;
+                    $('#select_action').modal("show");
+                    //$('#dialog').modal("show");
+                    //$(this).css('border-color', 'red');
 
-            },
+                },
+            <%end%>
             eventResize: function(event, delta, revertFunc) {
                 curr_event_id = event.id;
                 jQuery.ajax({
@@ -491,7 +498,6 @@
                     }
                 });
             },
-            editable: true,
             eventLimit: true, // allow "more" link when too many events
             events: {url: '/events/'}
         });

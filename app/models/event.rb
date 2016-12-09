@@ -1,7 +1,7 @@
 class Event < ApplicationRecord
   belongs_to :program
   belongs_to :meetingtype
-  has_many :user_events
+  has_many :user_events,:dependent => :delete_all
   has_many :users, :through => :user_events
 
   before_save :calculate_hours

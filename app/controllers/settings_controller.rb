@@ -1,4 +1,5 @@
 class SettingsController < ApplicationController
+  before_action :CheckAccess?
   before_action :set_setting, only: [:show, :edit, :update, :destroy]
 
   # GET /settings
