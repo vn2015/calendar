@@ -1,0 +1,17 @@
+<%= form_for (@setting)  do |f| %>
+  <div class="form-group">
+     <%= f.label :"Buffer time (min)"%>
+     <%= f.text_field :buffer_time, class: 'form-control', :required => true %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :email_report %>
+    <%= f.text_field :email_report, class: 'form-control', :required => true %>
+  </div>
+
+  <div class="form-group">
+      <%= f.submit nil, class: 'btn btn-primary' %>
+      <%= link_to t('.cancel', default: t("helpers.links.cancel")),
+                  settings_path, class: 'btn btn-default' %>
+  </div>
+<% end %>

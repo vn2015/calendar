@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :settings, only: [:index, :edit, :update]
   resources :events
   resources :meetingtypes
   #resources :clients
