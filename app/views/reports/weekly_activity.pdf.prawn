@@ -59,7 +59,7 @@
             client =cp["id"]
         else
             i=i+1
-            data1[i] = [i, cp["name"],cp["total_hours"]]
+            data1[i] = [i, cp["name"],cp["total_hours"], cp["total_earnings"]]
         end
     end
 
