@@ -7,23 +7,34 @@ class ProgramsController < ApplicationController
   # GET /programs.json
   def index
     @filter_name_val =''
-    @is_paid_all = false
-    @is_paid_yes =false
-    @is_paid_no =false
+    @filter_notes_val =''
+    @filter_is_paid = ''
+    @button_search_text=''
+    @button_search_data=''
 
-    if params[:filter_is_paid].present?
-      @is_paid_all = true if params[:filter_is_paid]=="all"
-      @is_paid_yes = true if params[:filter_is_paid]=="1"
-      @is_paid_no = true if params[:filter_is_paid]=="0"
 
-    end
+    @filter_is_paid = params[:filter_is_paid] if params[:filter_is_paid].present?
     @filter_name_val =params[:filter_name] if params[:filter_name].present?
-    @programs = Program
-    @programs =@programs.where("name like '%#{params[:filter_name]}%'") if params[:filter_name].present?
-    if !@is_paid_all==true && params[:filter_is_paid].present?
-      @programs =@programs.where("COALESCE(is_paid,0) =#{params[:filter_is_paid]}",)
+    @filter_notes_val =params[:filter_notes] if params[:filter_notes].present?
+    if params[:commit].present?
+      @display = ''
+      @button_search_text='Hide Search'
+      @button_search_data='open'
+    else
+      @display = 'display: none;'
+      @button_search_text='Show Search'
+      @button_search_data='close'
     end
-    @programs = @programs.paginate(:page => params[:page]).order(:id).all
+
+    @programs = Program
+    @programs =@programs.where("name ilike '%#{params[:filter_name]}%'") if params[:filter_name].present?
+    @programs =@programs.where("notes ilike '%#{params[:filter_notes]}%'") if params[:filter_notes].present?
+    if @filter_is_paid!='' && params[:filter_is_paid].present?
+      @programs =@programs.where("COALESCE(is_paid,0) =#{@filter_is_paid}",)
+    end
+    @programs = @programs.paginate(:page => params[:page]).order(:id).all()
+
+    @statuses = [{"name"=>"All", "id"=>""}, {"name"=>"Yes", "id"=>"1"}, {"name"=>"No", "id"=>"0"}]
 
   end
 
@@ -39,6 +50,7 @@ class ProgramsController < ApplicationController
 
   # GET /programs/1/edit
   def edit
+
   end
 
   # POST /programs
@@ -60,9 +72,11 @@ class ProgramsController < ApplicationController
   # PATCH/PUT /programs/1
   # PATCH/PUT /programs/1.json
   def update
+    logger.debug request.query_parameters
     respond_to do |format|
       if @program.update(program_params)
-        format.html { redirect_to programs_path(request.query_parameters), notice: 'Program was successfully updated.' }
+
+        format.html { redirect_to  :controller => "programs", :action => "index", :params => request.query_parameters, :notice => 'Program was successfully updated.' }
         format.json { render :show, status: :ok, location: @program }
       else
         format.html { render :edit }

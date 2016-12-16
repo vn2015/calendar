@@ -1,22 +1,38 @@
 <h1>Programs</h1>
-  <div class="col-sm-2">
-      <%= link_to 'New Program', new_program_path, class: "btn btn-primary  btn-sm" %>
+  <div class="row" style="margin-bottom: 10px;">
+      <div class="col-md-6 col-sm-6 col-xs-6">
+          <%= link_to 'New Program', new_program_path, class: "btn btn-primary  btn-sm" %>
+      </div>
+      <div class="col-md-6 col-sm-6 col-xs-6 text-right">
+          <a href="#" class="btn btn-primary btn-sm" onclick="return false;" id="search_button"" data-status="<%=@button_search_data%>" >
+          <%=@button_search_text %>
+          </a>
+      </div>
   </div>
-  <%= form_tag(programs_path, method: 'get',class:'form-inline') do  %>
-  <div class="col-sm-6">
-        <%= label_tag "Search by Name:"%>
-        <%= text_field_tag "filter_name",@filter_name_val, class: 'form-control' %>
-        <%= label_tag "Is Paid:"%>
-        <%= radio_button_tag "filter_is_paid", "all", @is_paid_all %> All
-        <%= radio_button_tag "filter_is_paid", 1, @is_paid_yes %> Yes
-        <%= radio_button_tag "filter_is_paid", 0,@is_paid_no %> No
-  </div>
-  <div class="col-sm-2">
-    <%= submit_tag "Search", class: "btn btn-primary  btn-sm" %>
-  </div>
+  <div class="row" style="margin-bottom: 10px; <%=@display%> " id ="search_panel">
 
-<%end%>
-<table class="table table-striped table-bordered">
+            <%= form_tag(programs_path, method: 'get',class:'form-inline') do  %>
+            <div class="col-sm-3">
+                <%= label_tag "Name:"%>
+                <%= text_field_tag "filter_name",@filter_name_val, class: 'input-sm form-control' %>
+            </div>
+            <div class="col-sm-3">
+                <%= label_tag "Notes:"%>
+                <%= text_field_tag "filter_notes",@filter_notes_val, class: 'input-sm form-control' %>
+            </div>
+
+            <div class="col-sm-2">
+                <%= label_tag "Is Paid:"%>
+                <%= select_tag "filter_is_paid", options_for_select(@statuses.collect {|p| [ p['name'], p['id'] ] },@filter_is_paid),class: 'input-sm form-control'%>
+            </div>
+           <div class="col-sm-4">
+                <%= submit_tag "Search", class: "btn btn-primary  btn-sm" %>
+           </div>
+
+
+     <%end%>
+   </div>
+<table class="table table-striped table-bordered " id="data-table">
   <thead>
     <tr>
       <th class="counter text-center">#</th>
@@ -24,6 +40,7 @@
       <th>Color</th>
       <th>Notes</th>
       <th>Is Paid</th>
+      <th>Created</th>
       <th class="col-sm-1">Action</th>
     </tr>
   </thead>
@@ -37,14 +54,41 @@
         <td><%= program.name %></td>
         <td bgcolor="<%= program.color %>"><%= program.color %></td>
         <td><%= program.notes %></td>
-        <td>
-            <%=  program.is_paid==1?'True':'False'  %></td>
+        <td><%=  program.is_paid==1?'True':'False'  %></td>
+        <td><%= program.created_at.strftime('%d-%m-%Y %I:%M %p') %></td>
         <td><%= link_to 'Edit', edit_program_path(program,request.query_parameters) %>, <%= link_to 'Delete', program, method: :delete, data: { confirm: 'If this program has events, it will also be deleted. Are you sure you want to proceed?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 <%= will_paginate @programs , renderer: BootstrapPagination::Rails %>
+<script language="JavaScript">
+ $(document).ready(function () {
 
+     $('#data-table').DataTable({
+       "paging": false,
+       "searching": false,
+       "info": false,
+       "stateSave": true
+     });
+
+     $("#search_button").click(function(){
+         if ($(this).data('status')=="open"){
+             $(this).data('status',"close");
+             $(this).text('Show search')
+             $("#search_panel").hide();
+         }
+         else {
+             $(this).data('status',"open");
+             $(this).text('Hide Search')
+             $("#search_panel").show();
+
+         }
+
+     });
+
+
+});
+</script>
 
 

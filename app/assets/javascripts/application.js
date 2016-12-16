@@ -19,3 +19,4 @@
 //= require bootstrap-datetimepicker
 //= require bootstrap-colorpicker
 //= require bootstrap-multiselect
+//= require dataTables/jquery.dataTables

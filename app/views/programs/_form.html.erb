@@ -1,5 +1,5 @@
 
-<%= form_for(program) do |f| %>
+<%= form_for(program,:url => program_path(program, request.query_parameters)) do |f| %>
   <% if program.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(program.errors.count, "error") %> prohibited this program from being saved:</h2>
