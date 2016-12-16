@@ -7,7 +7,21 @@ class MeetingtypesController < ApplicationController
   # GET /meetingtypes
   # GET /meetingtypes.json
   def index
-    @meetingtypes = Meetingtype.all.paginate(:page => params[:page])
+    if params[:commit].present?
+      @display = ''
+      @button_search_text='Hide Search'
+      @button_search_data='open'
+    else
+      @display = 'display: none;'
+      @button_search_text='Show Search'
+      @button_search_data='close'
+    end
+
+
+    @meetingtypes = Meetingtype
+    @meetingtypes = @meetingtypes.where("name ilike '%#{params[:filter_name]}%'") if params[:filter_name].present?
+    @meetingtypes=@meetingtypes.paginate(:page => params[:page]).all()
+    @filter_name_val =params[:filter_name] if params[:filter_name].present?
   end
 
   # GET /meetingtypes/1
@@ -45,7 +59,9 @@ class MeetingtypesController < ApplicationController
   def update
     respond_to do |format|
       if @meetingtype.update(meetingtype_params)
-        format.html { redirect_to meetingtypes_path, notice: 'Meetingtype was successfully updated.' }
+        flash[:notice] = 'Meeting type was successfully updated.'
+        format.html { redirect_to  :controller => "meetingtypes", :action => "index", :params => request.query_parameters }
+        #format.html { redirect_to meetingtypes_path, notice: 'Meetingtype was successfully updated.' }
         format.json { render :show, status: :ok, location: @meetingtype }
       else
         format.html { render :edit }

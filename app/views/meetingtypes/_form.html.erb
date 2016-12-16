@@ -1,4 +1,4 @@
-<%= form_for(meetingtype) do |f| %>
+<%= form_for(meetingtype,:url => meetingtype_path(meetingtype, request.query_parameters)) do |f| %>
   <% if meetingtype.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(meetingtype.errors.count, "error") %> prohibited this meetingtype from being saved:</h2>

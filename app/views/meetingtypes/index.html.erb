@@ -1,10 +1,36 @@
 <h1>Meeting types</h1>
-<%= link_to 'New Meeting type', new_meetingtype_path, class: "btn btn-primary  btn-sm" %>
-<table class="table table-striped table-bordered">
+
+  <div class="row" style="margin-bottom: 10px;">
+      <div class="col-md-6 col-sm-6 col-xs-6">
+          <%= link_to 'New Meeting type', new_meetingtype_path, class: "btn btn-primary  btn-sm" %>
+      </div>
+      <div class="col-md-6 col-sm-6 col-xs-6 text-right">
+          <a href="#" class="btn btn-primary btn-sm" onclick="return false;" id="search_button"" data-status="<%=@button_search_data%>" >
+          <%=@button_search_text %>
+          </a>
+      </div>
+  </div>
+  <div class="row" style="margin-bottom: 10px; <%=@display%> " id ="search_panel">
+
+            <%= form_tag(meetingtypes_path, method: 'get',class:'form-inline') do  %>
+            <div class="col-sm-3">
+                <%= label_tag "Name:"%>
+                <%= text_field_tag "filter_name",@filter_name_val, class: 'input-sm form-control' %>
+            </div>
+           <div class="col-sm-4">
+                <%= submit_tag "Search", class: "btn btn-primary  btn-sm" %>
+           </div>
+
+
+     <%end%>
+   </div>
+<table class="table table-striped table-bordered " id="data-table">
+
   <thead>
     <tr>
       <th class="counter text-center">#</th>
       <th>Name</th>
+      <th>Created</th>
       <th class="col-sm-1">Action</th>
     </tr>
   </thead>
@@ -16,9 +42,36 @@
       <tr>
         <td class="text-right"><%=i%></td>
         <td><%= meetingtype.name %></td>
-        <td><%= link_to 'Edit', edit_meetingtype_path(meetingtype) %>, <%= link_to 'Delete', meetingtype, method: :delete, data: { confirm: 'If this meeting type has events, it will also be deleted. Are you sure you want to proceed?' } %></td>
+        <td><%= meetingtype.created_at.strftime('%d-%m-%Y %I:%M %p') %></td>
+        <td><%= link_to 'Edit', edit_meetingtype_path(meetingtype,request.query_parameters) %>, <%= link_to 'Delete', meetingtype, method: :delete, data: { confirm: 'If this meeting type has events, it will also be deleted. Are you sure you want to proceed?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 <%= will_paginate @meetingtypes , renderer: BootstrapPagination::Rails %>
+<script language="JavaScript">
+ $(document).ready(function () {
+
+     $('#data-table').DataTable({
+       "paging": false,
+       "searching": false,
+       "info": false,
+       "stateSave": true
+     });
+
+     $("#search_button").click(function(){
+         if ($(this).data('status')=="open"){
+             $(this).data('status',"close");
+             $(this).text('Show search')
+             $("#search_panel").hide();
+         }
+         else {
+             $(this).data('status',"open");
+             $(this).text('Hide Search')
+             $("#search_panel").show();
+
+         }
+
+     });
+});
+</script>

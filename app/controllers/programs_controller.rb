@@ -75,8 +75,8 @@ class ProgramsController < ApplicationController
     logger.debug request.query_parameters
     respond_to do |format|
       if @program.update(program_params)
-
-        format.html { redirect_to  :controller => "programs", :action => "index", :params => request.query_parameters, :notice => 'Program was successfully updated.' }
+        flash[:notice] = 'Program was successfully updated.'
+        format.html { redirect_to  :controller => "programs", :action => "index", :params => request.query_parameters}
         format.json { render :show, status: :ok, location: @program }
       else
         format.html { render :edit }
