@@ -1,7 +1,60 @@
 <h1>Clients</h1>
-<%= link_to 'New Client', new_user_path, class: "btn btn-primary  btn-sm" %>
-<table class="table table-striped table-bordered">
-  <thead>
+
+  <div class="row" style="margin-bottom: 10px;">
+      <div class="col-md-6 col-sm-6 col-xs-6">
+          <%= link_to 'New Client', new_user_path, class: "btn btn-primary  btn-sm" %>
+      </div>
+      <div class="col-md-6 col-sm-6 col-xs-6 text-right">
+          <a href="#" class="btn btn-primary btn-sm" onclick="return false;" id="search_button"" data-status="<%=@button_search_data%>" >
+          <%=@button_search_text %>
+          </a>
+      </div>
+  </div>
+  <div id ="search_panel" style="margin-bottom: 10px; <%=@display%> ">
+      <div class="row" >
+            <%= form_tag(users_path, method: 'get',) do  %>
+            <div class="col-sm-3">
+                <%= label_tag "First Name:"%>
+                <%= text_field_tag "filter_first_name",@filter_first_name_val, class: 'input-sm form-control' %>
+            </div>
+            <div class="col-sm-3">
+                <%= label_tag "Last Name:"%>
+                <%= text_field_tag "filter_last_name",@filter_last_name_val, class: 'input-sm form-control' %>
+            </div>
+            <div class="col-sm-3">
+                <%= label_tag "Notes:"%>
+                <%= text_field_tag "filter_notes",@filter_notes_val, class: 'input-sm form-control' %>
+            </div>
+       </div>
+
+       <div class="row">
+             <div class="col-sm-3">
+                <%= label_tag "Dob:"%>
+                <%= text_field_tag "filter_dob",@filter_dob_val, class: 'input-sm form-control' %>
+            </div>
+            <div class="col-sm-3">
+                <%= label_tag "Client ID:"%>
+                <%= text_field_tag "filter_client_id",@filter_client_id_val, class: 'input-sm form-control' %>
+            </div>
+            <div class="col-sm-3">
+                <%= label_tag "Rate:"%>
+                <%= number_field_tag "filter_rate",@filter_rate_val, class: 'input-sm form-control' %>
+            </div>
+
+       </div>
+       <div class="row" style="margin-top: 5px;">
+            <div class="col-sm-2">
+                <%= submit_tag "Search", class: "btn btn-primary  btn-sm" %>
+           </div>
+
+       </div>
+
+
+     <%end%>
+   </div>
+   </div>
+<table class="table table-striped table-bordered " id="data-table">
+ <thead>
     <tr>
       <th class="counter text-center">#</th>
       <th>First Name</th>
@@ -31,7 +84,7 @@
         <td>
 
             <a href="#"  data-id="<%=user.id%>" class="client-activity" onclick="return false;">Activity</a>,
-            <%= link_to 'Edit', edit_user_path(user) %>,
+            <%= link_to 'Edit', edit_user_path(user,request.query_parameters) %>,
             <%= link_to 'Delete', user, method: :delete, data: { confirm: 'If this client has events, it will also be deleted. Are you sure you want to proceed?' } %>
         </td>
       </tr>
@@ -168,4 +221,38 @@
 
 
       });
+</script>
+<script language="JavaScript">
+ $(document).ready(function () {
+
+     $('#data-table').DataTable({
+       "paging": false,
+       "searching": false,
+       "info": false,
+       "stateSave": true
+     });
+
+     $("#search_button").click(function(){
+         if ($(this).data('status')=="open"){
+             $(this).data('status',"close");
+             $(this).text('Show search')
+             $("#search_panel").hide();
+         }
+         else {
+             $(this).data('status',"open");
+             $(this).text('Hide Search')
+             $("#search_panel").show();
+
+         }
+
+     });
+});
+</script>
+ <script language="JavaScript">
+            $(document).ready(function () {
+              $('#filter_dob').datetimepicker({
+                  format: 'YYYY-MM-DD',
+                  extraFormats: [ 'YYYY-MM-DD' ]
+              });
+            });
 </script>

@@ -6,7 +6,34 @@ class UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
-    @users = getUser.all.paginate(:page => params[:page]).order(:id)
+
+    if params[:commit].present?
+      @display = ''
+      @button_search_text='Hide Search'
+      @button_search_data='open'
+    else
+      @display = 'display: none;'
+      @button_search_text='Show Search'
+      @button_search_data='close'
+    end
+
+    @filter_first_name_val =params[:filter_first_name] if params[:filter_first_name].present?
+    @filter_last_name_val =params[:filter_last_name] if params[:filter_last_name].present?
+    @filter_notes_val =params[:filter_notes] if params[:filter_notes].present?
+    @filter_dob_val =params[:filter_dob] if params[:filter_dob].present?
+    @filter_client_id_val =params[:filter_client_id] if params[:filter_client_id].present?
+    @filter_rate_val =params[:filter_rate] if params[:filter_rate].present?
+
+    @users = getUser
+    @users =@users.where("first_name ilike '%#{params[:filter_first_name]}%'") if params[:filter_first_name].present?
+    @users =@users.where("last_name ilike '%#{params[:filter_last_name]}%'") if params[:filter_last_name].present?
+    @users =@users.where("notes ilike '%#{params[:filter_notes]}%'") if params[:filter_notes].present?
+    @users =@users.where("dob= ?",params[:filter_dob]) if params[:filter_dob].present?
+    @users =@users.where("client_id= ?",params[:filter_client_id]) if params[:filter_client_id].present?
+    @users =@users.where("hourly_rate =?",params[:filter_rate]) if params[:filter_rate].present?
+
+
+    @users = @users.paginate(:page => params[:page]).order(:id).all()
   end
 
   # GET /users/1
