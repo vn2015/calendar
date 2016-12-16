@@ -6,7 +6,25 @@ class ProgramsController < ApplicationController
   # GET /programs
   # GET /programs.json
   def index
-    @programs = Program.all.paginate(:page => params[:page]).order(:id)
+    @filter_name_val =''
+    @is_paid_all = false
+    @is_paid_yes =false
+    @is_paid_no =false
+
+    if params[:filter_is_paid].present?
+      @is_paid_all = true if params[:filter_is_paid]=="all"
+      @is_paid_yes = true if params[:filter_is_paid]=="1"
+      @is_paid_no = true if params[:filter_is_paid]=="0"
+
+    end
+    @filter_name_val =params[:filter_name] if params[:filter_name].present?
+    @programs = Program
+    @programs =@programs.where("name like '%#{params[:filter_name]}%'") if params[:filter_name].present?
+    if !@is_paid_all==true && params[:filter_is_paid].present?
+      @programs =@programs.where("COALESCE(is_paid,0) =#{params[:filter_is_paid]}",)
+    end
+    @programs = @programs.paginate(:page => params[:page]).order(:id).all
+
   end
 
   # GET /programs/1
@@ -44,7 +62,7 @@ class ProgramsController < ApplicationController
   def update
     respond_to do |format|
       if @program.update(program_params)
-        format.html { redirect_to programs_path, notice: 'Program was successfully updated.' }
+        format.html { redirect_to programs_path(request.query_parameters), notice: 'Program was successfully updated.' }
         format.json { render :show, status: :ok, location: @program }
       else
         format.html { render :edit }
