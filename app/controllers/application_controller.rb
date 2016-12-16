@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   helper_method :IsAdmin?
   helper_method :CheckAccess?
 
-  WillPaginate.per_page = 1
+  WillPaginate.per_page = 10
 
 
 
