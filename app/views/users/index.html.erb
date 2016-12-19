@@ -10,8 +10,8 @@
       </div>
   </div>
   <div id ="search_panel" style="margin-bottom: 10px; <%=@display%> ">
+      <%= form_tag(users_path, method: 'get') do  %>
       <div class="row" >
-            <%= form_tag(users_path, method: 'get',) do  %>
             <div class="col-sm-3">
                 <%= label_tag "First Name:"%>
                 <%= text_field_tag "filter_first_name",@filter_first_name_val, class: 'input-sm form-control' %>
