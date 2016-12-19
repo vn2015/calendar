@@ -5,21 +5,23 @@ class EventsController < ApplicationController
   # GET /events
   # GET /events.json
   def index
-    @events = Event.select("events.*, color, array_agg(users.id) client_id").joins(:program)
+    @events = Event.select("events.*, color, array_agg(users.id) client_id, programs.name as program_name, user_events.hours, user_events.earnings, user_events.hourly_rate,user_events.is_paid,user_events.is_confirmed,user_events.date_confirmed ").joins(:program)
     @events = @events.joins("LEFT JOIN user_events ON user_events.event_id = events.id LEFT JOIN users ON users.id = user_events.user_id")
     @events = @events.where('date_start>=? and "date_end" <=? ', params[:start], params[:end])
     @events=  @events.where('user_events.user_id = ?',current_user.id) if !IsAdmin?
     @events=  @events.where('user_events.user_id = ?',params[:client_id]) if params[:client_id].present?
-    @events = @events.group('events.id, programs.color')
+    @events = @events.group('events.id, programs.color,programs.name, user_events.hours, user_events.earnings, user_events.hourly_rate, user_events.is_paid,is_confirmed,user_events.date_confirmed')
 
     @client_total_hours = Event.select("sum(user_events.hours) as hours, sum (user_events.earnings) as earnings ").joins("LEFT JOIN user_events ON user_events.event_id = events.id")
     @client_total_hours = @client_total_hours.where('user_events.user_id = ?',params[:client_id])
-    @client_total_hours = @client_total_hours.where('date_start>=? and "date_end" <=? ', params[:start], params[:end])
+    @client_total_hours = @client_total_hours.where('date_start>=? and "date_end" <? ', params[:start], params[:end])
 
     @total_hours = 0
+    @total_earnings = 0
     if params[:client_id].present?
-      @total_hours = @client_total_hours.all
-      @total_hours=@total_hours[0][:hours]
+      @total = @client_total_hours.all()
+      @total_hours=@total[0][:hours]
+      @total_earnings=@total[0][:earnings]
     end
 
     @events = @events.all.order(:id)
@@ -239,9 +241,10 @@ class EventsController < ApplicationController
 
     def count_hours
       params[:event][:client_id].each do |user|
-        total_hours = UserEvent.where('user_id=?',user).sum(:hours)
+        total_hours = UserEvent.select("sum(hours) as hours, sum(earnings) as earnings ").where('user_id=?',user)
         client = User.find(user)
-        client.hours = total_hours
+        client.hours = total_hours[0]["hours"]
+        client.earnings = total_hours[0]["earnings"]
         client.save
       end
 

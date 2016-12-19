@@ -20,6 +20,6 @@ class UserEvent < ApplicationRecord
     self.earnings = earnings
     self.hours = event_hours
     self.hourly_rate = user_hourly_rate
-
+    self.is_paid = program_is_paid
   end
 end

@@ -60,6 +60,7 @@
       <th>Client ID</th>
       <th>Rate</th>
       <th>Hours</th>
+      <th>Support</th>
       <th>Notes</th>
       <th class="col-sm-1">Action</th>
     </tr>
@@ -77,6 +78,7 @@
         <td><%= user.client_id %></td>
         <td class="text-right"><%= user.hourly_rate %></td>
         <td class="text-right"><%= user.hours %></td>
+        <td class="text-right"><%= user.earnings %></td>
         <td><%= user.notes %></td>
         <td>
 
@@ -100,7 +102,8 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-3"><label>Total hours:</label> <span id="total_hours_value">0</span></div>
+                    <div class="col-md-6"><label>Total hours:</label> <span id="total_hours_value">0</span></div>
+                    <div class="col-md-6"><label>Total support:</label> <span id="total_earnings_value">0</span></div>
 
                 </div>
                 <div id="calendar"></div>
@@ -120,6 +123,12 @@
    var curr_client_id =0;
    var curr_id = 0;
 
+   function getPaidStatus (id)
+   {
+       var val="false";
+       if (id==1) val="true";
+       return val;
+   }
 
 
 
@@ -136,6 +145,7 @@
      $(".client-activity").click(function() {
        $("#client_id").val($(this).data("id"));
          $("#total_hours_value").text('0.0')
+         $("#total_earnings_value").text('0.0')
          $("#client_activity_form").modal("show");
      });
 
@@ -186,19 +196,49 @@
             defaultDate: '<%=DateTime.now.to_date%>',
             navLinks: true, // can click day/week names to navigate views
             selectable: true,
-            eventAfterAllRender: function(){
+            eventRender: function(event, element) {
+                var format_str='hh:mm a';
+                str = '<tr><td class="fc-list-item-marker fc-widget-content"><span class="fc-event-dot" style="background-color:'+event.color+'"></span></td><td colspan="2" class="fc-list-item-title fc-widget-content">'+moment(event.start).format(format_str)+' - '+moment(event.end).format(format_str)+''
+                +', <b>Break:</b> '+event.launch_break+' min, <b>Hours:</b> '+event.hours
+                +', <b>Program:</b> '+event.program_name
+                +', <b>Paid:</b> '+getPaidStatus(event.is_paid)
+                +', <b>Rate:</b> '+event.hourly_rate
+                +', <b>Support:</b> '+event.earnings
+                +'<br><b>Event name:</b> <a>'+event.title+'</a>,'
+                +' <b>Confirmed:</b> <a>'+event.is_confirmed+'</a>';
+                if (event.date_confirmed!=null)
+                {
+                    str+= ', <b>Date confirmed:</b>'+moment(event.date_confirmed).format('DD-MM-YYYY hh:mm a');
 
+                }
+                if (event.notes!="")
+                {
+                   str+= ', <b>Notes:</b>'+event.notes;
+
+                }
+                if (event.transport!="") {
+                    str+= ', <b>Transport:</b> ' + event.transport;
+                }
+                if (event.transport!="") {
+                    str+= ', <b>Adres:</b> '+event.address;
+                }
+
+                str+='</td><tr>';
+                return str;
+
+
+            },
+            eventAfterAllRender: function(){
                 event =  $('#calendar').fullCalendar( 'clientEvents')
+                var total_hours ="0.0"
+                var total_earnings ="0.0"
                 if (event.length>0)
                 {
-                    $("#total_hours_value").text(event[0].total_hours);
+                    if(event[0].total_hours!=null) total_hours = event[0].total_hours;
+                    if(event[0].total_earnings!=null) total_earnings = event[0].total_earnings;
                 }
-                else
-                {
-                    $("#total_hours_value").text('0.0');
-
-                }
-
+                $("#total_hours_value").text(total_hours);
+                $("#total_earnings_value").text(total_earnings);
             },
             cache: false,
             selectHelper: true,
