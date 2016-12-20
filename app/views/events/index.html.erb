@@ -56,6 +56,64 @@
        </div><!-- /.modal-content -->
    </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<!-- Modal -->
+<div class="modal fade" id="detail_action" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"  data-backdrop="static" data-keyboard="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title" >Events details</h3>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="row">
+                            <div class="col-md-3"><label>Name:</label></div>
+                            <div class="col-md-9"><span id="det_event_title"></span></div>
+                    </div>
+                    <div class="row">
+                            <div class="col-md-3"><label>Date range:</label></div>
+                            <div class="col-md-9"><span id="det_event_start"></span> - <span id="det_event_end"></span></div>
+                    </div>
+                    <div class="row">
+                            <div class="col-md-3"><label>Break time:</label></div>
+                            <div class="col-md-9"><span id="det_event_launch_break"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3"><label>Date confirmed:</label></div>
+                        <div class="col-md-9"><span id="det_event_date_confirmed"></span></div>
+                    </div>
+                    <div class="row">
+                            <div class="col-md-3"><label>Meeting type:</label></div>
+                            <div class="col-md-9"><span id="det_meetingtype_name"></span></div>
+                    </div>
+                    <div class="row">
+                            <div class="col-md-3"><label>Program:</label></div>
+                            <div class="col-md-9"><span id="det_program_name"></span></div>
+                    </div>
+                    <div class="row">
+                            <div class="col-md-3"><label>Transport:</label></div>
+                            <div class="col-md-9"><span id="det_event_transport"></span></div>
+                    </div>
+                    <div class="row">
+                            <div class="col-md-3"><label>Adress:</label></div>
+                            <div class="col-md-9"><span id="det_event_address"></span></div>
+                    </div>
+                    <div class="row">
+                            <div class="col-md-3"><label>Notes:</label></div>
+                            <div class="col-md-9"><span id="det_event_notes"></span></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <%= submit_tag "Confirm", class: "btn btn-primary  btn-lg ", id:"btn_confirm_action" %>
+                    <%= submit_tag "Close", class: "btn btn-default  btn-lg ", id:"btn_close_detail_action" %>
+                </div>
+            </div>
+       </div><!-- /.modal-content -->
+   </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
 
 <!-- Modal -->
 <div class="modal fade" id="repeat_action" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"  data-backdrop="static" data-keyboard="true">
@@ -139,6 +197,33 @@
             $('#client_id').multiselect('refresh');
         }
 
+        function SetDetail(event)
+        {
+            $("#det_event_start").text(moment(event.start).format('hh:mm a'));
+            $("#det_event_end").text(moment(event.end).format('hh:mm a'));
+            $("#det_event_title").text(event.title);
+            $("#det_meetingtype_name").text(event.meetingtype_name);
+            $("#det_program_name").text(event.program_name);
+            $("#det_event_address").text(event.address);
+            $("#det_event_transport").text(event.transport);
+            $("#det_event_notes").text(event.notes);
+            $("#det_event_launch_break").text(event.launch_break+' min');
+            if (event.date_confirmed!=null) {
+                $("#det_event_date_confirmed").text(moment(event.date_confirmed).format('DD-MM-YYYY hh:mm a'));
+            }
+            else{
+                $("#det_event_date_confirmed").text('');
+            }
+            if (Boolean(event.is_confirmed)==true){
+                $("#btn_confirm_action").hide();
+            }
+            else {
+                $("#btn_confirm_action").show();
+            }
+
+
+        }
+
         function CheckForm()
         {
             if ($("#event_title").val()==""){
@@ -203,6 +288,46 @@
             $("#repeat_action").modal("hide");
         });
 
+        $('#btn_close_detail_action').click(function(){
+            $("#detail_action").modal("hide");
+        });
+
+        $("#btn_confirm_action").click(function() {
+
+            event =curr_event_obj;
+            var strconfirm = confirm("Are you sure?");
+            if (strconfirm == true) {
+                jQuery.ajax({
+                    type: 'POST',
+                    url: '/events_confirm',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    longPressDelay:200,
+                    data: JSON.stringify({
+                        event:
+                        {
+                            id: event.id
+                        }
+                    }),
+                    success: function (json) {
+                        alert("Event succefully confirmed!");
+                        $('#detail_action').modal("hide");
+                        $('#calendar').fullCalendar('refetchEvents' );
+
+                    },
+                    error: function (answer){
+                        alert(answer.responseJSON.errors);
+                        //revertFunc();
+                    }
+                });
+
+
+            }
+        });
+
+
+
+
         $("#event_repeat_action").click(function() {
             $("#repeat_action_form")[0].reset();
             $('#select_action').modal("hide");
@@ -215,7 +340,7 @@
             if (strconfirm == true) {
                 jQuery.ajax({
                     type: 'POST',
-                    url: '/eventsrepeat',
+                    url: '/events_repeat',
                     dataType: 'json',
                     contentType: 'application/json',
                     longPressDelay:200,
@@ -428,6 +553,7 @@
                 $("#btn_create").show();
                 $('#dialog').modal("show");
             },
+
             <% if IsAdmin? %>
                 selectable: true,
                 selectHelper: true,
@@ -436,10 +562,14 @@
                     curr_event_id = event.id;
                     curr_event_obj =event;
                     $('#select_action').modal("show");
-                    //$('#dialog').modal("show");
-                    //$(this).css('border-color', 'red');
-
                 },
+            <%else%>
+            eventClick: function(event, jsEvent, view) {
+                curr_event_id = event.id;
+                curr_event_obj =event;
+                SetDetail(event);
+                $('#detail_action').modal("show");
+            },
             <%end%>
             eventResize: function(event, delta, revertFunc) {
                 curr_event_id = event.id;
@@ -469,6 +599,9 @@
                 });
 
 
+            },
+            eventRender: function(event, element) {
+                element.find('.fc-title').append('<br><p style="font-size: 0.90em;"><b>Confirmed:</b> '+event.is_confirmed+'</p>')
             },
             eventDrop: function(event, delta, revertFunc) {
                 curr_event_id = event.id;

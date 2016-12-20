@@ -13,7 +13,8 @@ Rails.application.routes.draw do
     root 'devise/sessions#new'
   end
   post '/create_user' => 'users#create_user'
-  post '/eventsrepeat' => 'events#repeat'
+  post '/events_repeat' => 'events#repeat'
+  post '/events_confirm' => 'events#confirm'
   get 'reports/weekly_activity'
   get 'reports/weekly_activity_send'
   get 'reports' =>'reports#index'
