@@ -41,7 +41,7 @@
       <th>Notes</th>
       <th>Is Paid</th>
       <th>Created</th>
-      <th class="col-sm-1">Action</th>
+      <th class="col-sm-2">Action</th>
     </tr>
   </thead>
 
@@ -56,12 +56,35 @@
         <td><%= program.notes %></td>
         <td><%=  program.is_paid==1?'True':'False'  %></td>
         <td><%= program.created_at.strftime('%d-%m-%Y %I:%M %p') %></td>
-        <td><%= link_to 'Edit', edit_program_path(program,request.query_parameters) %>, <%= link_to 'Delete', program, method: :delete, data: { confirm: 'If this program has events, it will also be deleted. Are you sure you want to proceed?' } %></td>
+        <td>
+            <a href="#"  data-id="<%=program.id%>" class="program-history" onclick="return false;">History</a>,
+            <%= link_to 'Edit', edit_program_path(program,request.query_parameters) %>,
+            <%= link_to 'Delete', program, method: :delete, data: { confirm: 'If this program has events, it will also be deleted. Are you sure you want to proceed?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 <%= will_paginate @programs , renderer: BootstrapPagination::Rails %>
+
+ <div class="modal fade" id="program_history_form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"  data-backdrop="static" data-keyboard="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title" >Program status history</h3>
+            </div>
+            <div class="modal-body">
+                <div id="table_history"></div>
+                <div class="form-group text-right" style="margin-top: 10px;">
+                    <%= submit_tag "Close", class: "btn btn-default  btn-lg ", id:"btn_close" %>
+                </div>
+
+            </div>
+       </div><!-- /.modal-content -->
+   </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
 <script language="JavaScript">
  $(document).ready(function () {
 
@@ -86,6 +109,32 @@
          }
 
      });
+
+     $(".program-history").click(function() {
+         jQuery.ajax({
+             type: 'POST',
+             url: '/program_paid_status_history',
+             longPressDelay:200,
+             data: {
+                     program_id: $(this).data("id")
+             },
+             success: function (answer) {
+
+                 $("#table_history").html(answer);
+             },
+             error: function (answer){
+                 alert(answer.responseJSON.errors);
+                 //revertFunc();
+             }
+         });
+
+         $("#program_history_form").modal("show");
+     });
+
+     $("#btn_close").click(function() {
+         $("#program_history_form").modal("hide");
+     });
+
 });
 </script>
 

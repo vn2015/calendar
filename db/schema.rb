@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161219155251) do
+ActiveRecord::Schema.define(version: 20161220154900) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,6 +40,15 @@ ActiveRecord::Schema.define(version: 20161219155251) do
     t.string   "name",       null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "program_status_histories", force: :cascade do |t|
+    t.integer  "program_id"
+    t.boolean  "old"
+    t.boolean  "new"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["program_id"], name: "index_program_status_histories_on_program_id", using: :btree
   end
 
   create_table "programs", force: :cascade do |t|
@@ -73,6 +82,15 @@ ActiveRecord::Schema.define(version: 20161219155251) do
     t.index ["user_id"], name: "index_user_events_on_user_id", using: :btree
   end
 
+  create_table "user_rate_histories", force: :cascade do |t|
+    t.integer  "user_id"
+    t.decimal  "old",        precision: 12, scale: 2
+    t.decimal  "new",        precision: 12, scale: 2
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.index ["user_id"], name: "index_user_rate_histories_on_user_id", using: :btree
+  end
+
   create_table "users", force: :cascade do |t|
     t.string   "email",                                           default: "",    null: false
     t.string   "encrypted_password",                              default: "",    null: false
@@ -102,6 +120,8 @@ ActiveRecord::Schema.define(version: 20161219155251) do
 
   add_foreign_key "events", "meetingtypes"
   add_foreign_key "events", "programs"
+  add_foreign_key "program_status_histories", "programs"
   add_foreign_key "user_events", "events"
   add_foreign_key "user_events", "users"
+  add_foreign_key "user_rate_histories", "users"
 end

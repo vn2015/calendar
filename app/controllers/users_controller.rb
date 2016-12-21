@@ -94,6 +94,11 @@ class UsersController < ApplicationController
       end
   end
 
+  def hourly_rate_history
+    @history = UserRateHistory.where('user_id=?',params[:user_id]).order(:created_at)
+    render :layout => false
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user

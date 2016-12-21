@@ -15,6 +15,8 @@ Rails.application.routes.draw do
   post '/create_user' => 'users#create_user'
   post '/events_repeat' => 'events#repeat'
   post '/events_confirm' => 'events#confirm'
+  post '/program_paid_status_history' => 'programs#paid_status_history'
+  post '/user_hourly_rate_history' => 'users#hourly_rate_history'
   get 'reports/weekly_activity'
   get 'reports/weekly_activity_send'
   get 'reports' =>'reports#index'

@@ -1,0 +1,26 @@
+<table class="table table-striped table-bordered " id="data-table">
+    <thead>
+    <tr>
+        <th class="counter text-center">#</th>
+        <th>Old status</th>
+        <th>New status</th>
+        <th>Date</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% i = 0 %>
+    <% @history.each do |history| %>
+        <% i += 1 %>
+        <tr>
+            <td class="text-right"><%=i%></td>
+            <td><%= history.old %></td>
+            <td><%= history.new %></td>
+            <td><%= history.created_at.strftime('%d-%m-%Y %I:%M %p') %></td>
+        </tr>
+    <% end %>
+    <%if @history.size==0%>
+        <tr><td colspan="4" class="text-center">Data not exists</td></tr>
+    <%end%>
+    </tbody>
+</table>

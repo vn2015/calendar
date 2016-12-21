@@ -95,6 +95,11 @@ class ProgramsController < ApplicationController
       end
   end
 
+  def paid_status_history
+    @history = ProgramStatusHistory.where('program_id=?',params[:program_id]).order(:created_at)
+    render :layout => false
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_program

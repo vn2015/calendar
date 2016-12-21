@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  program: one
+  old: false
+  new: false
+
+two:
+  program: two
+  old: false
+  new: false

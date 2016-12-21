@@ -85,6 +85,7 @@
         <td>
 
             <a href="#"  data-id="<%=user.id%>" class="client-activity" onclick="return false;">Activity</a>,
+            <a href="#"  data-id="<%=user.id%>" class="client-history" onclick="return false;">History</a>,
             <%= link_to 'Edit', edit_user_path(user,request.query_parameters) %>,
             <%= link_to 'Delete', user, method: :delete, data: { confirm: 'If this client has events, it will also be deleted. Are you sure you want to proceed?' } %>
         </td>
@@ -112,6 +113,24 @@
                 <div class="form-group text-right" style="margin-top: 10px;">
                     <%= submit_tag "Close", class: "btn btn-default  btn-lg ", id:"btn_close" %>
                     <input type="hidden" id="client_id" value="0">
+                </div>
+
+            </div>
+       </div><!-- /.modal-content -->
+   </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="user_history_form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"  data-backdrop="static" data-keyboard="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title" >Hourly rate history</h3>
+            </div>
+            <div class="modal-body">
+                <div id="table_history"></div>
+                <div class="form-group text-right" style="margin-top: 10px;">
+                    <%= submit_tag "Close", class: "btn btn-default  btn-lg ", id:"btn_close_history" %>
                 </div>
 
             </div>
@@ -155,6 +174,33 @@
        $("#client_activity_form").modal("hide");
        curr_client_id = 0;
      });
+
+     $(".client-history").click(function() {
+           jQuery.ajax({
+               type: 'POST',
+               url: '/user_hourly_rate_history',
+               longPressDelay:200,
+               data: {
+                   user_id: $(this).data("id")
+               },
+               success: function (answer) {
+
+                   $("#table_history").html(answer);
+               },
+               error: function (answer){
+                   alert(answer.responseText);
+                   console.log(answer)
+                   //revertFunc();
+               }
+           });
+
+
+           $("#user_history_form").modal("show");
+       });
+
+       $("#btn_close_history").click(function() {
+           $("#user_history_form").modal("hide");
+       });
 
 
 
