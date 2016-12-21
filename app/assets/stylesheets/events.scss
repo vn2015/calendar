@@ -5,3 +5,41 @@
   padding-left: 2px;
   vertical-align: middle;
 }
+#progarms_list {
+  overflow-y: scroll;
+}
+
+#progarms_list a:hover  {
+  background-color: darkgrey;
+}
+#progarms_list td {
+  padding: 0px;
+}
+#progarms_list a {
+  padding: 5px;
+  display: block;
+}
+#progarms_list a:visited, a:focus {
+  color:white;
+
+}
+@media screen and (max-width: 990px) {
+  #progarms_list {
+    height: 200px;
+    margin-top:10px;
+    margin-bottom:10px;
+}
+
+}
+@media screen and (min-width: 991px) and (max-width: 1200px) {
+  #progarms_list {
+    margin-top:50px;
+    height: 580px;
+  }
+}
+@media screen and (min-width: 1201px)  {
+  #progarms_list {
+    margin-top:50px;
+    height: 705px;
+  }
+}

@@ -5,11 +5,37 @@
     <% end %>
 </div>
 <div class="row">
+    <% if IsAdmin? %>
+    <div class="col-md-2" style="padding-right: 0px">
+       <div id="progarms_list">
+        <table class="table " >
+            <tr>
+                <th>Programs</th>
+                <tr id="tr_" >
+                    <td>
+                        <a href="#"  style ="color:#000;font-weight: bold;font-style: italic; display:block;" data-id=""  class="program-view" onclick="return false;"> All programs</a></td>
+                    </td>
+                </tr>
+            </tr>
+            <% @programs.each do |program| %>
+                <tr id="tr_<%=program.id%>" bgcolor="<%=program.color%>">
+                    <td><a href="#"  style ="color:white;display:block;" data-id="<%=program.id%>" data-color="<%=program.color%>" class="program-view" onclick="return false;"> <%= program.name %></a></td>
+                </tr>
+            <% end %>
 
+        </table>
+       </div>
+    </div>
 
+    <div class="col-md-10">
+        <div id="calendar"></div>
+    </div>
+    <%else%>
     <div class="col-md-12">
         <div id="calendar"></div>
     </div>
+
+    <%end%>
 </div><!--/row-->
 
 
@@ -635,7 +661,24 @@
             events: {url: '/events/'}
         });
 
-    });
+        $(".program-view").click(function() {
+            var source = {
+                data: {
+                    program_id:$(this).data("id")
+                },
+                url : '/events'
+            };
+            $('#calendar').fullCalendar('removeEvents');
+            $('#calendar').fullCalendar('addEventSource', source);
+            $("tr[id*='tr_']").css("font-weight","normal");
+            $("tr[id*='tr_']").css("font-style","normal");
+            $("#tr_"+$(this).data("id")).css("font-weight","bold");
+            $("#tr_"+$(this).data("id")).css("font-style","italic")
+
+
+        });
+
+  });
 
 
 </script>

@@ -10,6 +10,7 @@ class EventsController < ApplicationController
     @events = @events.where('date_start>=? and "date_end" <=? ', params[:start], params[:end])
     @events =  @events.where('user_events.user_id = ?',current_user.id) if !IsAdmin?
     @events =  @events.where('user_events.user_id = ?',params[:client_id]) if params[:client_id].present?
+    @events =  @events.where('events.program_id = ?',params[:program_id]) if params[:program_id].present?
     @events = GroupEventsData(@events)
 
     @client_total_hours = Event.select("sum(user_events.hours) as hours, sum (user_events.earnings) as earnings ").joins("LEFT JOIN user_events ON user_events.event_id = events.id")
@@ -25,7 +26,7 @@ class EventsController < ApplicationController
     end
 
     @events = @events.all.order(:id)
-    @programs = Program.all
+    @programs = Program.all.order(:name)
     @event = Event.new
     @clients = getUser.all
     @meetingtypes = Meetingtype.all
