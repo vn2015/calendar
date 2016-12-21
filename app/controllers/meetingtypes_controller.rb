@@ -32,10 +32,12 @@ class MeetingtypesController < ApplicationController
   # GET /meetingtypes/new
   def new
     @meetingtype = Meetingtype.new
+    @url = meetingtypes_path
   end
 
   # GET /meetingtypes/1/edit
   def edit
+    @url =meetingtype_path(@meetingtype, request.query_parameters)
   end
 
   # POST /meetingtypes

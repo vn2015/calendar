@@ -49,7 +49,8 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
-    @url = user_path(@user.id)
+    #@url = user_path(@user.id)
+    @url = user_path(@user, request.query_parameters)
   end
 
   # POST /users

@@ -46,11 +46,12 @@ class ProgramsController < ApplicationController
   # GET /programs/new
   def new
     @program = Program.new
+    @url = programs_path
   end
 
   # GET /programs/1/edit
   def edit
-
+    @url = program_path(@program, request.query_parameters)
   end
 
   # POST /programs
