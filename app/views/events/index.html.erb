@@ -8,18 +8,14 @@
     <% if IsAdmin? %>
     <div class="col-md-2" style="padding-right: 0px">
        <div id="progarms_list">
+           <div>
+               <h3>Programs</h3>
+           </div>
         <table class="table " >
-            <tr>
-                <th>Programs</th>
-                <tr id="tr_" >
-                    <td>
-                        <a href="#"  style ="color:#000;font-weight: bold;font-style: italic; display:block;" data-id=""  class="program-view" onclick="return false;"> All programs</a></td>
-                    </td>
-                </tr>
-            </tr>
             <% @programs.each do |program| %>
                 <tr id="tr_<%=program.id%>" bgcolor="<%=program.color%>">
-                    <td><a href="#"  style ="color:white;display:block;" data-id="<%=program.id%>" data-color="<%=program.color%>" class="program-view" onclick="return false;"> <%= program.name %></a></td>
+                    <td><span style ="color:white;font-weight: bold"> <%= program.name %></span></td>
+                    <td><input type="checkbox" id="check_<%=program.id%>" value="<%=program.id%>"></td>
                 </tr>
             <% end %>
 
@@ -171,6 +167,10 @@
 
 
     $(document).ready(function() {
+
+        $("input[id*='check_']:checked").each(function() {
+           $(this).prop("checked", false);
+        });
 
         $(".multiselect").html('Select the client');
 
@@ -346,9 +346,7 @@
                         //revertFunc();
                     }
                 });
-
-
-            }
+           }
         });
 
 
@@ -658,13 +656,18 @@
                 });
             },
             eventLimit: true, // allow "more" link when too many events
-            events: {url: '/events/'}
+            events: {url: '/events/?program_id=0'}
         });
 
-        $(".program-view").click(function() {
+        $("input[id*='check_']").click(function() {
+            str='';
+            $("input[id*='check_']:checked").each(function() {
+                str+=','+$(this).attr('value');
+            });
+            str=str.substring(1,str.length)
             var source = {
                 data: {
-                    program_id:$(this).data("id")
+                    program_id:str
                 },
                 url : '/events'
             };

@@ -13,16 +13,21 @@
   background-color: darkgrey;
 }
 #progarms_list td {
-  padding: 0px;
+  padding-top: 4px;
+  padding-left: 5px;
+  padding-bottom: 0px;
 }
 #progarms_list a {
   padding: 5px;
-  display: block;
+
 }
 #progarms_list a:visited, a:focus {
   color:white;
-
 }
+#progarms_list h3{
+  margin-top:0px;
+}
+
 @media screen and (max-width: 990px) {
   #progarms_list {
     height: 200px;
