@@ -75,7 +75,7 @@
         <td class="text-right"><%=i%></td>
         <td><%= user.first_name %></td>
         <td><%= user.last_name %></td>
-        <td><%= user.dob %></td>
+        <td><%= user.dob.strftime('%d-%m-%Y') %></td>
         <td><%= user.client_id %></td>
         <td><%= user.email %></td>
         <td class="text-right"><%= user.hourly_rate %></td>
