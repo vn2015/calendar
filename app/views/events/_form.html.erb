@@ -26,16 +26,14 @@
   </div>
 
 
-  <div class="row">
-      <div class="col-xs-6">
-        <%= f.label :start %>
-        <%= f.text_field :start, class: 'form-control',  :required => true %>
-      </div>
+  <div class="form-group">
+      <%= f.label :start %>
+      <%= f.text_field :start, class: 'form-control',  :required => true %>
+  </div>
 
-      <div class="col-xs-6">
-        <%= f.label :end %>
-        <%= f.text_field :end, class: 'form-control', :required => true %>
-      </div>
+  <div class="form-group">
+      <%= f.label :end %>
+      <%= f.text_field :end, class: 'form-control', :required => true %>
   </div>
   <div class="form-group">
     <%= f.label "Break Time (min)" %>
