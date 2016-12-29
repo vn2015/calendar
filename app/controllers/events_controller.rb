@@ -69,6 +69,7 @@ class EventsController < ApplicationController
           ue.user_id =user
           ue.event_id = @event.id
           ue.save
+          count_hours
         end
 
         @event = SelectEventsData()
@@ -267,18 +268,19 @@ class EventsController < ApplicationController
     end
 
     def count_hours
-#      params[:event][:client_id].each do |user|
-#        total_hours = UserEvent.select("sum(hours) as hours, sum(earnings) as earnings ").where('user_id=?',user)
-#        client = User.find(user)
-#        client.hours = total_hours[0]["hours"]
-#        client.earnings = total_hours[0]["earnings"]
-#        client.save
-#      end
-        total_hours = UserEvent.select("sum(hours) as hours, sum(earnings) as earnings ").where('user_id=?',current_user.id)
-        client = User.find(current_user.id)
+      params[:event][:client_id].each do |user|
+        total_hours = UserEvent.select("sum(hours) as hours, sum(earnings) as earnings ").where('user_id=?',user)
+        client = User.find(user)
         client.hours = total_hours[0]["hours"]
         client.earnings = total_hours[0]["earnings"]
         client.save
+      end
+
+#        total_hours = UserEvent.select("sum(hours) as hours, sum(earnings) as earnings ").where('user_id=?',current_user.id)
+#        client = User.find(current_user.id)
+#        client.hours = total_hours[0]["hours"]
+#        client.earnings = total_hours[0]["earnings"]
+ #       client.save
     end
 
    def SelectEventsData
