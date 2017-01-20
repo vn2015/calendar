@@ -30,6 +30,10 @@
       <%= f.check_box :is_paid %>
       <%= f.label "This is a paid program"%>
   </div>
+  <div class="form-group">
+      <%= f.check_box :approval %>
+      <%= f.label "Events needs approval by client"%>
+  </div>
   <div class="actions">
       <%= f.submit class: "btn btn-primary  btn-lg" %>
       <%= link_to 'Cancel', programs_path, class: "btn btn-default  btn-lg" %>

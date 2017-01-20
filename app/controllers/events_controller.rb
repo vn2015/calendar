@@ -13,6 +13,22 @@ class EventsController < ApplicationController
     @events =  @events.where('events.program_id in (?) ',params[:program_id].split(",")) if params[:program_id].present?
     @events = GroupEventsData(@events)
 
+
+    @events = @events.all().order(:id)
+    @programs = Program.all().order(:name)
+    @event = Event.new
+    @clients = getUser.all()
+    @meetingtypes = Meetingtype.all()
+  end
+
+  def events_detail
+    @events = SelectDetailEventsData()
+    @events = @events.where('date_start>=? and "date_end" <=? ', params[:start], params[:end])
+    @events =  @events.where('user_events.user_id = ?',current_user.id) if !IsAdmin?
+    @events =  @events.where('user_events.user_id = ?',params[:client_id]) if params[:client_id].present?
+    @events =  @events.where('events.program_id in (?) ',params[:program_id].split(",")) if params[:program_id].present?
+    @events = GroupDetailEventsData(@events)
+
     @client_total_hours = Event.select("sum(user_events.hours) as hours, sum (user_events.earnings) as earnings ").joins("LEFT JOIN user_events ON user_events.event_id = events.id")
     @client_total_hours = @client_total_hours.where('user_events.user_id = ?',params[:client_id])
     @client_total_hours = @client_total_hours.where('date_start>=? and "date_end" <? ', params[:start], params[:end])
@@ -25,11 +41,11 @@ class EventsController < ApplicationController
       @total_earnings=@total[0][:earnings]
     end
 
-    @events = @events.all.order(:id)
-    @programs = Program.all.order(:name)
+    @events = @events.all().order(:id)
+    @programs = Program.all().order(:name)
     @event = Event.new
-    @clients = getUser.all
-    @meetingtypes = Meetingtype.all
+    @clients = getUser.all()
+    @meetingtypes = Meetingtype.all()
   end
 
   # GET /events/1
@@ -40,8 +56,8 @@ class EventsController < ApplicationController
   # GET /events/new
   def new
     @event = Event.new
-    @programs = Program.all
-    @clients = Client.all
+    @programs = Program.all()
+    @clients = Client.all()
   end
 
   # GET /events/1/edit
@@ -57,6 +73,7 @@ class EventsController < ApplicationController
       render :json => { :errors => "Cannot Book, buffer time of about #{buffer_time} minutes between meetings!"}, status: :no and return
     end
     @event = Event.new(event_params)
+    event_is_confirmed = get_approval(params[:event][:program_id])
 
 
 
@@ -68,6 +85,7 @@ class EventsController < ApplicationController
           ue =UserEvent.new
           ue.user_id =user
           ue.event_id = @event.id
+          ue.is_confirmed = event_is_confirmed
           ue.save
           count_hours
         end
@@ -90,7 +108,6 @@ class EventsController < ApplicationController
     @event =UserEvent.where('event_id= ? and user_id= ?',params[:event][:id],current_user.id).first
     if !@event.nil?
       @event.is_confirmed = true
-      @event.date_confirmed = Time.now.strftime('%Y-%m-%d %I:%M %p')
       @event.save
     end
     count_hours
@@ -108,6 +125,7 @@ class EventsController < ApplicationController
     @event = @event.find(params[:event][:id])
 
     first_event = @event
+    event_is_confirmed = get_approval(first_event.program_id)
     repeat_period = params[:event][:repeat_period]
     repeat_quantity = params[:event][:repeat_quantity].to_i
 
@@ -159,6 +177,7 @@ class EventsController < ApplicationController
           ue =UserEvent.new
           ue.user_id =user
           ue.event_id = @event.id
+          ue.is_confirmed = event_is_confirmed
           ue.save
         end
 
@@ -185,13 +204,36 @@ class EventsController < ApplicationController
       if @event.update(event_params)
 
         event_id = @event.id
-        @event.user_events.destroy_all
+        event_is_confirmed = get_approval(@event.program_id)
 
-        params[:event][:client_id].each do |user|
+        @events = Event.select("events.id, array_agg(user_events.user_id) client_id")
+        @events = @events.joins("INNER JOIN user_events ON user_events.event_id = events.id")
+        @events = @events.where("user_events.event_id = ?", 15).group('events.id').first
+
+        old_user_events =@events["client_id"]
+
+        arr_client=params[:event][:client_id]
+        arr_client.map! { |i| i.to_i }
+        new_user_events =  arr_client-old_user_events
+        user_events_for_del = old_user_events-arr_client
+
+        logger.debug old_user_events
+        logger.debug arr_client
+        logger.debug new_user_events
+        logger.debug user_events_for_del
+
+
+
+        new_user_events.each do |user|
           ue =UserEvent.new
           ue.user_id =user
           ue.event_id = @event.id
+          ue.is_confirmed = event_is_confirmed
           ue.save
+        end
+        user_events_for_del.each do |user|
+          ue =UserEvent.where("user_id=? and event_id=? and is_confirmed=false", user, @event.id).all()
+          ue.destroy_all
         end
         count_hours
         #@event = Event.select("events.*, color, array_agg(users.id) client_id").joins(:program).joins("LEFT JOIN user_events ON user_events.event_id = events.id LEFT JOIN users ON users.id = user_events.user_id").group('events.id, programs.color').find(@event.id)
@@ -284,15 +326,33 @@ class EventsController < ApplicationController
     end
 
    def SelectEventsData
-     @events = Event.select("events.*, color, array_agg(users.id) client_id, programs.name as program_name, user_events.hours, user_events.earnings, user_events.hourly_rate,user_events.is_paid,user_events.is_confirmed,user_events.date_confirmed,meetingtypes.name as meetingtype_name ").joins(:program)
+     @events = Event.select("events.*, color, array_agg(users.id) client_id, programs.name as program_name, meetingtypes.name as meetingtype_name ").joins(:program)
      @events = @events.joins("LEFT JOIN user_events ON user_events.event_id = events.id LEFT JOIN users ON users.id = user_events.user_id")
      @events = @events.joins(:meetingtype)
      return @events
    end
 
    def GroupEventsData(event)
-     return event.group('events.id, programs.color,programs.name, user_events.hours, user_events.earnings, user_events.hourly_rate, user_events.is_paid,is_confirmed,user_events.date_confirmed,meetingtypes.name')
+     return event.group('events.id, programs.color,programs.name, meetingtypes.name')
    end
+
+  def SelectDetailEventsData
+    @events = Event.select("events.*, color, array_agg(users.id) client_id, programs.name as program_name, user_events.hours, user_events.earnings, user_events.hourly_rate,user_events.is_paid,user_events.is_confirmed,user_events.date_confirmed,meetingtypes.name as meetingtype_name ").joins(:program)
+    @events = @events.joins("LEFT JOIN user_events ON user_events.event_id = events.id LEFT JOIN users ON users.id = user_events.user_id")
+    @events = @events.joins(:meetingtype)
+    return @events
+  end
+
+  def GroupDetailEventsData(event)
+    return event.group('events.id, programs.color,programs.name, user_events.hours, user_events.earnings, user_events.hourly_rate, user_events.is_paid,is_confirmed,user_events.date_confirmed,meetingtypes.name')
+  end
+
+
+
+  def get_approval(program_id)
+      program = Program.find(program_id)
+     return  program.approval==true ? false : true
+  end
 
 
 end

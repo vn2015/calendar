@@ -7,8 +7,7 @@ class UserEvent < ApplicationRecord
   private
 
   def set_fields
-
-    #if self.is_confirmed ==true
+    if self.is_confirmed == true
         program_is_paid = Event.find(self.event_id).program[:is_paid]
         event_hours = Event.find(self.event_id)[:event_hours]
         user_hourly_rate = User.find(self.user_id)[:hourly_rate]
@@ -22,6 +21,7 @@ class UserEvent < ApplicationRecord
         self.hours = event_hours
         self.hourly_rate = user_hourly_rate
         self.is_paid = program_is_paid
-    #end
+        self.date_confirmed = Time.now.strftime('%Y-%m-%d %I:%M %p')
+    end
   end
 end

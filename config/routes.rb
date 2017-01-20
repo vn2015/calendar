@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+
   resources :settings, only: [:index, :edit, :update]
   resources :events
   resources :meetingtypes
@@ -20,4 +21,8 @@ Rails.application.routes.draw do
   get 'reports/weekly_activity'
   get 'reports/weekly_activity_send'
   get 'reports' =>'reports#index'
+  get 'reports/events_confirm'
+  get 'reports/event_confirm' =>'reports#user_event_confirm'
+  get 'events_show_detail' =>'events#events_detail'
+
 end

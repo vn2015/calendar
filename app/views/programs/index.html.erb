@@ -40,6 +40,7 @@
       <th>Color</th>
       <th>Notes</th>
       <th>Is Paid</th>
+      <th>Approval</th>
       <th>Created</th>
       <th class="col-sm-2">Action</th>
     </tr>
@@ -55,6 +56,7 @@
         <td bgcolor="<%= program.color %>"><%= program.color %></td>
         <td><%= program.notes %></td>
         <td><%=  program.is_paid==1?'True':'False'  %></td>
+        <td><%=  program.approval == true ? 'True':'False'  %></td>
         <td><%= program.created_at.strftime('%d-%m-%Y %I:%M %p') %></td>
         <td>
             <a href="#"  data-id="<%=program.id%>" class="program-history" onclick="return false;">History</a>,
