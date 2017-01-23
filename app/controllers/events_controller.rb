@@ -326,14 +326,14 @@ class EventsController < ApplicationController
     end
 
    def SelectEventsData
-     @events = Event.select("events.*, color, array_agg(users.id) client_id, programs.name as program_name, meetingtypes.name as meetingtype_name ").joins(:program)
+     @events = Event.select("events.*, color, array_agg(users.id) client_id, programs.name as program_name, meetingtypes.name as meetingtype_name, user_events.is_confirmed ").joins(:program)
      @events = @events.joins("LEFT JOIN user_events ON user_events.event_id = events.id LEFT JOIN users ON users.id = user_events.user_id")
      @events = @events.joins(:meetingtype)
      return @events
    end
 
    def GroupEventsData(event)
-     return event.group('events.id, programs.color,programs.name, meetingtypes.name')
+     return event.group('events.id, programs.color, programs.name, meetingtypes.name, user_events.is_confirmed')
    end
 
   def SelectDetailEventsData

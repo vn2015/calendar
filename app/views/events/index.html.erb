@@ -240,15 +240,15 @@
             else{
                 $("#det_event_date_confirmed").text('');
             }
-            /*
+
             if (Boolean(event.is_confirmed)==true){
                 $("#btn_confirm_action").hide();
             }
             else {
                 $("#btn_confirm_action").show();
             }
-            */
-            $("#btn_confirm_action").hide();
+
+            //$("#btn_confirm_action").hide();
 
         }
 
@@ -334,7 +334,8 @@
                     data: JSON.stringify({
                         event:
                         {
-                            id: event.id
+                            id: event.id,
+                            client_id:event.client_id
                         }
                     }),
                     success: function (json) {
@@ -626,11 +627,11 @@
 
 
             },
-            /*
+
             eventRender: function(event, element) {
                 element.find('.fc-title').append('<br><p style="font-size: 0.90em;"><b>Confirmed:</b> '+event.is_confirmed+'</p>')
             },
-            */
+
             eventDrop: function(event, delta, revertFunc) {
                 curr_event_id = event.id;
                 jQuery.ajax({

@@ -252,8 +252,8 @@
                 +', <b>Paid:</b> '+getPaidStatus(event.is_paid)
                 +', <b>Rate:</b> '+event.hourly_rate
                 +', <b>Support:</b> '+event.earnings
-                +'<br><b>Event name:</b> <a>'+event.title+'</a>';
-                /*' <b>Confirmed:</b> <a>'+event.is_confirmed+'</a>';*/
+                +'<br><b>Event name:</b> <a>'+event.title+'</a>'
+                +', <b>Confirmed:</b> <a>'+event.is_confirmed+'</a>';
                 if (event.date_confirmed!=null)
                 {
                     str+= ', <b>Date confirmed:</b> '+moment(event.date_confirmed).format('DD-MM-YYYY hh:mm a');
