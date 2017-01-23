@@ -9,11 +9,11 @@
 
           <div class="col-sm-3">
               <%= label_tag "Client:"%>
-              <%= select_tag :client_id, options_from_collection_for_select(@clients, "id", "username",@client_id), prompt: "Select the client", class: 'form-control'  %>
+              <%= select_tag :client_id, options_from_collection_for_select(@clients, "id", "username",@client_id), prompt: "All", class: 'form-control'  %>
           </div>
           <div class="col-sm-3">
               <%= label_tag "Program:"%>
-              <%= select_tag :program_id, options_from_collection_for_select(@programs, "id", "name",@program_id),  prompt: "Select the program", class: 'form-control'%>
+              <%= select_tag :program_id, options_from_collection_for_select(@programs, "id", "name",@program_id),  prompt: "All", class: 'form-control'%>
           </div>
        </div>
        <div class="row">
@@ -23,7 +23,7 @@
             </div>
             <div class="col-sm-3">
                 <%= label_tag "Status:"%>
-                <%= select_tag :is_confirmed, options_for_select([['Pending', false], ['Approved', true]], @is_confirmed), prompt: "Select the status", class: 'form-control' %>
+                <%= select_tag :is_confirmed, options_for_select([['Pending', false], ['Approved', true]], @is_confirmed), prompt: "All", class: 'form-control' %>
             </div>
 
        </div>

@@ -208,7 +208,7 @@ class EventsController < ApplicationController
 
         @events = Event.select("events.id, array_agg(user_events.user_id) client_id")
         @events = @events.joins("INNER JOIN user_events ON user_events.event_id = events.id")
-        @events = @events.where("user_events.event_id = ?", 15).group('events.id').first
+        @events = @events.where("user_events.event_id = ?", event_id).group('events.id').first
 
         old_user_events =@events["client_id"]
 
