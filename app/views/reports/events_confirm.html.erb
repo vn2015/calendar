@@ -65,15 +65,14 @@
         <td class="text-right"><%= event.earnings %></td>
         <td>
             <%
-
                bz=request.query_parameters
                bz[:user_event_id] =event.user_events_id
                if (event.is_confirmed==true) %>
-                Aprooved
+                Approved
             <%else
                 #event_confirm_path(event.user_events_id, request.query_parameters)
             %>
-                <%= link_to 'Aprove',  reports_event_confirm_path(bz), method: :get, data: { confirm: 'Are you sure?' } %>
+                <%= link_to 'Approve',  reports_event_confirm_path(bz), method: :get, data: { confirm: 'Are you sure?' } %>
             <%end%>
         </td>
       </tr>

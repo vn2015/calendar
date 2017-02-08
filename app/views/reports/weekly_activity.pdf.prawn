@@ -2,7 +2,7 @@
     pdf.text "Activity report from #{@start} to #{@end}",:size => 16
     pdf.move_down(20)
     pdf.text "Client Activity",:size => 14
-    client_headers = ['#','Clent name','Hours','Client Support']
+    client_headers = ['#','Client name','Hours','Client Support']
     program_headers = ['#','Program name','Hours','Client Support']
 
     i=0
