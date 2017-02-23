@@ -90,8 +90,9 @@ class ReportsController < ApplicationController
     @program_id = nil
     @program_id = params[:program_id] if params[:program_id].present?
 
-    @is_confirmed = nil
+    @is_confirmed = false
     @is_confirmed = params[:is_confirmed] if params[:is_confirmed].present?
+    @is_confirmed = nil if !params[:is_confirmed].present? & params[:commit].present?
 
 
     @events = Event.select("events.title, events.start, events.end, users.first_name, users.last_name, programs.name as program_name, user_events.id as user_events_id, user_events.user_id,  user_events.hours, user_events.earnings, user_events.hourly_rate,user_events.is_paid,user_events.is_confirmed,user_events.date_confirmed ").joins(:program)
@@ -100,7 +101,7 @@ class ReportsController < ApplicationController
     @events = @events.where('date_start>=? and "date_end" <=? ', @date_from_val, @date_to_val)
     @events = @events.where('program_id =?', @program_id) if params[:program_id].present?
     @events = @events.where('user_id =?', @client_id) if params[:client_id].present?
-    @events = @events.where('is_confirmed =?', @is_confirmed)  if params[:is_confirmed].present?
+    @events = @events.where('is_confirmed =?', @is_confirmed)  if @is_confirmed!= nil
     @events = @events.all()
 
     @clients = getUser.all()
