@@ -90,7 +90,7 @@ class ReportsController < ApplicationController
     @program_id = nil
     @program_id = params[:program_id] if params[:program_id].present?
 
-    @is_confirmed = false
+    @is_confirmed = nil
     @is_confirmed = params[:is_confirmed] if params[:is_confirmed].present?
 
 
@@ -100,7 +100,7 @@ class ReportsController < ApplicationController
     @events = @events.where('date_start>=? and "date_end" <=? ', @date_from_val, @date_to_val)
     @events = @events.where('program_id =?', @program_id) if params[:program_id].present?
     @events = @events.where('user_id =?', @client_id) if params[:client_id].present?
-    @events = @events.where('is_confirmed =?', @is_confirmed) 
+    @events = @events.where('is_confirmed =?', @is_confirmed)  if params[:is_confirmed].present?
     @events = @events.all()
 
     @clients = getUser.all()
