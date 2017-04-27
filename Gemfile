@@ -48,8 +48,8 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 
-gem 'devise'
-gem 'pg'
+gem 'devise', '4.2.1'
+gem 'pg','0.18.4'
 gem 'bootstrap-sass'
 gem 'bootstrap-sass-extras'
 gem 'devise-bootstrapped'
@@ -60,3 +60,4 @@ gem 'prawn-rails'
 gem 'bootstrap-colorpicker-rails'
 gem 'bootstrap-multiselect-rails'
 gem 'jquery-datatables-rails'
+#gem 'mail-logger'

@@ -1,6 +1,6 @@
 class ReportsController < ApplicationController
-  before_action :CheckAccess?
-  before_action :authenticate_user!
+  #before_action :CheckAccess?
+  #before_action :authenticate_user!
 
   def index
 

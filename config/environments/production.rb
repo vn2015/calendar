@@ -23,7 +23,7 @@ Rails.application.configure do
   # config.assets.css_compressor = :sass
 
   # Do not fallback to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = false
+  config.assets.compile = true
 
   # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
 
@@ -87,17 +87,18 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { :host => Rails.application.secrets.app_host }
   #These settings are for the sending out email for active admin and consequently the   devise mailer
   config.action_mailer.perform_deliveries = true
+  #config.action_mailer.logger = true
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings =
-      {
+       {
           :address            => Rails.application.secrets.smtp_host,
           :port               => Rails.application.secrets.smtp_port,
           :domain             => Rails.application.secrets.smtp_domain, #'gmail.com', #you can also use google.com
           :authentication     => :plain,
           :user_name          => Rails.application.secrets.smtp_user,
           :password           => Rails.application.secrets.smtp_pwd,
-          :enable_starttls_auto => true
+          :enable_starttls_auto => false
       }
 
 end

@@ -232,7 +232,8 @@ class EventsController < ApplicationController
           ue.save
         end
         user_events_for_del.each do |user|
-          ue =UserEvent.where("user_id=? and event_id=? and is_confirmed=false", user, @event.id).all()
+          #ue =UserEvent.where("user_id=? and event_id=? and is_confirmed=false", user, @event.id).all()
+          ue =UserEvent.where("user_id=? and event_id=? ", user, @event.id).all()
           ue.destroy_all
         end
         count_hours
